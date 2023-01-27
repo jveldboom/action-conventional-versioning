@@ -8,6 +8,8 @@ const utils = require('./utils')
 const run = async () => {
   const octokit = github.getOctokit(core.getInput('github-token'))
 
+  core.info(JSON.stringify(context))
+
   let latestTag = ''
   try {
     latestTag = await github.getLatestTag(octokit, context.repository_owner, context.repository)

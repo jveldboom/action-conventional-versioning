@@ -44374,6 +44374,8 @@ const utils = __nccwpck_require__(1608)
 const run = async () => {
   const octokit = github.getOctokit(core.getInput('github-token'))
 
+  core.info(JSON.stringify(context))
+
   let latestTag = ''
   try {
     latestTag = await github.getLatestTag(octokit, context.repository_owner, context.repository)
