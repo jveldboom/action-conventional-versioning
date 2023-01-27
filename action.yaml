@@ -5,7 +5,7 @@ branding:
   color: orange
 
 inputs:
-  github_token:
+  github-token:
     description: GitHub token
     required: false
     default: ${{ github.token }}
