@@ -5,6 +5,10 @@ branding:
   color: orange
 
 inputs:
+  github_token:
+    description: GitHub token
+    required: false
+    default: ${{ github.token }}
   default-bump:
     description: Default version bump (major, minor, or patch)
     required: false

@@ -6,7 +6,7 @@ const github = require('./github')
 const utils = require('./utils')
 
 const run = async () => {
-  const octokit = github.getOctokit()
+  const octokit = github.getOctokit(core.getInput('github-input'))
 
   let latestTag = ''
   try {

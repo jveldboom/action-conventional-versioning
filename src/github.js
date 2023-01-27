@@ -1,7 +1,7 @@
 const github = require('@actions/github')
 
-const getOctokit = () => {
-  return github.getOctokit(process.env.GITHUB_TOKEN)
+const getOctokit = (token) => {
+  return github.getOctokit(token)
 }
 
 const getLatestTag = async (octokit, owner, repo) => {
