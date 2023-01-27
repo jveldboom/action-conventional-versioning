@@ -12,12 +12,15 @@ const run = async () => {
   console.log('context')
   core.info(JSON.stringify(context.repo))
 
+
   let latestTag = ''
   try {
-    latestTag = await github.getLatestTag(octokit, context.repository_owner, context.repository)
+    latestTag = await github.getLatestTag(octokit)
   } catch (err) {
     return core.setFailed(`unable to get latest tag - error: ${err.message} ${err.response.status}`)
   }
+
+  console.log('latestTag',latestTag)
 
   // return a default version if no previous github tags
   if (!latestTag) {

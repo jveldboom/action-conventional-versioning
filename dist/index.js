@@ -44096,10 +44096,7 @@ const getOctokit = (token) => {
 }
 
 const getLatestTag = async (octokit, owner, repo) => {
-  const res = await octokit.request('GET /repos/{owner}/{repo}/tags?per_page=1', {
-    owner,
-    repo
-  })
+  const res = await octokit.request('GET /repos/{owner}/{repo}/tags?per_page=1', ...github.context.repo)
 
   if (res.data.length >= 1) return res.data[0]
 }
@@ -44378,12 +44375,15 @@ const run = async () => {
   console.log('context')
   core.info(JSON.stringify(context.repo))
 
+
   let latestTag = ''
   try {
-    latestTag = await github.getLatestTag(octokit, context.repository_owner, context.repository)
+    latestTag = await github.getLatestTag(octokit)
   } catch (err) {
     return core.setFailed(`unable to get latest tag - error: ${err.message} ${err.response.status}`)
   }
+
+  console.log('latestTag',latestTag)
 
   // return a default version if no previous github tags
   if (!latestTag) {

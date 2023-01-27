@@ -5,10 +5,7 @@ const getOctokit = (token) => {
 }
 
 const getLatestTag = async (octokit, owner, repo) => {
-  const res = await octokit.request('GET /repos/{owner}/{repo}/tags?per_page=1', {
-    owner,
-    repo
-  })
+  const res = await octokit.request('GET /repos/{owner}/{repo}/tags?per_page=1', ...github.context.repo)
 
   if (res.data.length >= 1) return res.data[0]
 }
