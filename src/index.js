@@ -32,7 +32,7 @@ const run = async () => {
   const commits = await github.compareCommits(octokit, owner, repo, latestTag.commit.sha, context.sha)
   console.log(commits)
 
-  let bump = await commit.analyzeCommits({ preset: 'conventionalcommits' }, { commits, logger: { log: console.info.bind(console) } })
+  let bump = await commit.analyzeCommits({ }, { commits, logger: { log: console.info.bind(console) } })
   if (!bump) bump = core.getInput('default-bump')
 
   const incrementedVersion = semver.inc(latestTag.name, bump)
