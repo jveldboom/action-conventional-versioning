@@ -1,0 +1,31 @@
+name: Conventional Versioning
+description: GitHub Action that returns a sematic version based on Conventional Commits
+branding:
+  icon: cloud
+  color: orange
+
+inputs:
+  default-bump:
+    description: Default version bump (major, minor, or patch)
+    required: false
+    default: patch
+  prefix:
+    description: Version prefix / string to prepend to version
+    required: false
+    default: v
+
+outputs:
+  version:
+    description: Sematic version without prefix
+  version-with-prefix:
+    description: Sematic version with prefix
+  major:
+    description: Major version number
+  minor:
+    description: Minor version number
+  patch:
+    description: Patch version number
+
+runs:
+  using: "node16"
+  main: "dist/index.js"
