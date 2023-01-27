@@ -44374,9 +44374,6 @@ const utils = __nccwpck_require__(1608)
 const run = async () => {
   const octokit = github.getOctokit(core.getInput('github-token'))
 
-  core.info(JSON.stringify(context))
-  console.log('context')
-  core.info(JSON.stringify(context.repo))
   const { owner, repo } = context.repo
 
   let latestTag = ''
@@ -44399,6 +44396,7 @@ const run = async () => {
   }
 
   const commits = await github.compareCommits(octokit, owner, repo, latestTag.commit.sha, context.sha)
+  console.log(commits)
 
   let bump = await commit.analyzeCommits({ preset: 'conventionalcommits' }, { commits, logger: { log: console.info.bind(console) } })
   if (!bump) bump = core.getInput('default-bump')
