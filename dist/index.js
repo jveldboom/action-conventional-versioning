@@ -44372,7 +44372,7 @@ const github = __nccwpck_require__(8396)
 const utils = __nccwpck_require__(1608)
 
 const run = async () => {
-  const octokit = github.getOctokit(core.getInput('github-input'))
+  const octokit = github.getOctokit(core.getInput('github-token'))
 
   let latestTag = ''
   try {
