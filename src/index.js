@@ -9,6 +9,7 @@ const run = async () => {
   const octokit = github.getOctokit(core.getInput('github-token'))
 
   core.info(JSON.stringify(context))
+  core.info(JSON.stringify(...context.repo))
 
   let latestTag = ''
   try {
