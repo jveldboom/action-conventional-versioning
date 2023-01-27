@@ -32,7 +32,21 @@ const run = async () => {
   const commits = await github.compareCommits(octokit, owner, repo, latestTag.commit.sha, context.sha)
   console.log(commits)
 
-  let bump = await commit.analyzeCommits({ config: 'conventional-changelog-conventionalcommits' }, { commits, logger: { log: console.info.bind(console) } })
+  const parserOpts = {
+    headerPattern: /^(\w*)(?:\((.*)\))?!?: (.*)$/,
+    breakingHeaderPattern: /^(\w*)(?:\((.*)\))?!: (.*)$/,
+    headerCorrespondence: [
+      'type',
+      'scope',
+      'subject'
+    ],
+    noteKeywords: ['BREAKING CHANGE', 'BREAKING-CHANGE'],
+    revertPattern: /^(?:Revert|revert:)\s"?([\s\S]+?)"?\s*This reverts commit (\w*)\./i,
+    revertCorrespondence: ['header', 'hash']
+  }
+
+
+  let bump = await commit.analyzeCommits({ parserOpts }, { commits, logger: { log: console.info.bind(console) } })
   if (!bump) bump = core.getInput('default-bump')
 
   const incrementedVersion = semver.inc(latestTag.name, bump)
