@@ -17,7 +17,7 @@ const run = async () => {
   try {
     latestTag = await github.getLatestTag(octokit)
   } catch (err) {
-    return core.setFailed(`unable to get latest tag - error: ${err.message} ${err.response.status}`)
+    return core.setFailed(`unable to get latest tag - error: ${err.message} ${err?.response?.status}`)
   }
 
   console.log('latestTag',latestTag)
