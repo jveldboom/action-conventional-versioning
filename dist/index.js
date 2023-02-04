@@ -28,7 +28,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.issue = exports.issueCommand = void 0;
 const os = __importStar(__nccwpck_require__(2037));
-const utils_1 = __nccwpck_require__(6321);
+const utils_1 = __nccwpck_require__(5278);
 /**
  * Commands
  *
@@ -137,7 +137,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getIDToken = exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
 const command_1 = __nccwpck_require__(7351);
 const file_command_1 = __nccwpck_require__(717);
-const utils_1 = __nccwpck_require__(6321);
+const utils_1 = __nccwpck_require__(5278);
 const os = __importStar(__nccwpck_require__(2037));
 const path = __importStar(__nccwpck_require__(1017));
 const oidc_utils_1 = __nccwpck_require__(8041);
@@ -475,7 +475,7 @@ exports.prepareKeyValueMessage = exports.issueFileCommand = void 0;
 const fs = __importStar(__nccwpck_require__(7147));
 const os = __importStar(__nccwpck_require__(2037));
 const uuid_1 = __nccwpck_require__(5840);
-const utils_1 = __nccwpck_require__(6321);
+const utils_1 = __nccwpck_require__(5278);
 function issueFileCommand(command, message) {
     const filePath = process.env[`GITHUB_${command}`];
     if (!filePath) {
@@ -947,7 +947,7 @@ exports.summary = _summary;
 
 /***/ }),
 
-/***/ 6321:
+/***/ 5278:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -6906,7 +6906,7 @@ function setup(env) {
 	createDebug.disable = disable;
 	createDebug.enable = enable;
 	createDebug.enabled = enabled;
-	createDebug.humanize = __nccwpck_require__(900);
+	createDebug.humanize = __nccwpck_require__(9992);
 	createDebug.destroy = destroy;
 
 	Object.keys(env).forEach(key => {
@@ -7182,13 +7182,13 @@ module.exports = setup;
 if (typeof process === 'undefined' || process.type === 'renderer' || process.browser === true || process.__nwjs) {
 	module.exports = __nccwpck_require__(8222);
 } else {
-	module.exports = __nccwpck_require__(5332);
+	module.exports = __nccwpck_require__(4874);
 }
 
 
 /***/ }),
 
-/***/ 5332:
+/***/ 4874:
 /***/ ((module, exports, __nccwpck_require__) => {
 
 /**
@@ -27864,7 +27864,7 @@ module.exports = function (obj, modifier) {
 
 /***/ }),
 
-/***/ 900:
+/***/ 9992:
 /***/ ((module) => {
 
 /**
@@ -34348,7 +34348,7 @@ if (debugUtil && debugUtil.debuglog) {
 /*</replacement>*/
 
 
-var BufferList = __nccwpck_require__(2746);
+var BufferList = __nccwpck_require__(6522);
 
 var destroyImpl = __nccwpck_require__(7049);
 
@@ -35675,7 +35675,7 @@ Writable.WritableState = WritableState;
 /*<replacement>*/
 
 var internalUtil = {
-  deprecate: __nccwpck_require__(5278)
+  deprecate: __nccwpck_require__(7127)
 };
 /*</replacement>*/
 
@@ -36530,7 +36530,7 @@ module.exports = createReadableStreamAsyncIterator;
 
 /***/ }),
 
-/***/ 2746:
+/***/ 6522:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -38475,7 +38475,7 @@ module.exports = gte
 
 /***/ }),
 
-/***/ 929:
+/***/ 900:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const SemVer = __nccwpck_require__(8088)
@@ -38684,7 +38684,7 @@ const identifiers = __nccwpck_require__(2463)
 const parse = __nccwpck_require__(5925)
 const valid = __nccwpck_require__(9601)
 const clean = __nccwpck_require__(8848)
-const inc = __nccwpck_require__(929)
+const inc = __nccwpck_require__(900)
 const diff = __nccwpck_require__(4297)
 const major = __nccwpck_require__(6688)
 const minor = __nccwpck_require__(8447)
@@ -40976,7 +40976,7 @@ exports.getUserAgent = getUserAgent;
 
 /***/ }),
 
-/***/ 5278:
+/***/ 7127:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 
@@ -41061,7 +41061,7 @@ var _v3 = _interopRequireDefault(__nccwpck_require__(5122));
 
 var _v4 = _interopRequireDefault(__nccwpck_require__(9120));
 
-var _nil = _interopRequireDefault(__nccwpck_require__(5350));
+var _nil = _interopRequireDefault(__nccwpck_require__(5332));
 
 var _version = _interopRequireDefault(__nccwpck_require__(1595));
 
@@ -41069,7 +41069,7 @@ var _validate = _interopRequireDefault(__nccwpck_require__(6900));
 
 var _stringify = _interopRequireDefault(__nccwpck_require__(8950));
 
-var _parse = _interopRequireDefault(__nccwpck_require__(4848));
+var _parse = _interopRequireDefault(__nccwpck_require__(2746));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -41105,7 +41105,7 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ 5350:
+/***/ 5332:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -41120,7 +41120,7 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ 4848:
+/***/ 2746:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -41445,7 +41445,7 @@ exports.URL = exports.DNS = void 0;
 
 var _stringify = _interopRequireDefault(__nccwpck_require__(8950));
 
-var _parse = _interopRequireDefault(__nccwpck_require__(4848));
+var _parse = _interopRequireDefault(__nccwpck_require__(2746));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -44133,19 +44133,57 @@ module.exports = {
 
 const core = __nccwpck_require__(2186)
 const semver = __nccwpck_require__(1383)
+const commit = __nccwpck_require__(156)
 
+/**
+ * Output version spec
+ * @param {string} version version number
+ * @param {string} prefix version prefix
+ */
 const setVersionOutputs = (version, prefix) => {
   const output = semver.parse(`${prefix}${version}`)
 
   core.setOutput('version', output.version)
-  core.setOutput('version-with-prefix', output.raw)
+  core.setOutput('version-with-prefix', `${prefix}${output.version}`)
   core.setOutput('major', output.major)
   core.setOutput('minor', output.minor)
   core.setOutput('patch', output.patch)
 }
 
+/**
+ * Version analyze conventional commit parser options
+ * https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-conventionalcommits/parser-opts.js
+ */
+const parserOpts = {
+  headerPattern: /^(\w*)(?:\((.*)\))?!?: (.*)$/,
+  breakingHeaderPattern: /^(\w*)(?:\((.*)\))?!: (.*)$/,
+  headerCorrespondence: [
+    'type',
+    'scope',
+    'subject'
+  ],
+  noteKeywords: ['BREAKING CHANGE', 'BREAKING-CHANGE'],
+  revertPattern: /^(?:Revert|revert:)\s"?([\s\S]+?)"?\s*This reverts commit (\w*)\./i,
+  revertCorrespondence: ['header', 'hash']
+}
+
+/**
+ * Get version bump/increment type based on commit messages
+ * @param {Array.<object>} commits [{ message, sha }]
+ * @param {string} defaultBump bump type (major, minor, patch)
+ * @returns
+ */
+const getVersionBump = async (commits = [], defaultBump = 'patch') => {
+  let bump = await commit.analyzeCommits({ parserOpts }, { commits, logger: { log: () => undefined } })
+  if (!bump) bump = defaultBump
+
+  return bump
+}
+
 module.exports = {
-  setVersionOutputs
+  setVersionOutputs,
+  parserOpts,
+  getVersionBump
 }
 
 
@@ -44364,17 +44402,16 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const commit = __nccwpck_require__(156)
 const semver = __nccwpck_require__(1383)
 const core = __nccwpck_require__(2186)
-const { context } = __nccwpck_require__(5438)
 const github = __nccwpck_require__(8396)
 const utils = __nccwpck_require__(1608)
 
 const run = async () => {
   const octokit = github.getOctokit(core.getInput('github-token'))
 
-  const { owner, repo } = context.repo
+  const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
+  const sha = process.env.GITHUB_SHA
 
   let latestTag = ''
   try {
@@ -44382,8 +44419,6 @@ const run = async () => {
   } catch (err) {
     return core.setFailed(`unable to get latest tag - error: ${err.message} ${err?.response?.status}`)
   }
-
-  console.log('latestTag',latestTag)
 
   // return a default version if no previous github tags
   if (!latestTag) {
@@ -44395,25 +44430,9 @@ const run = async () => {
     return core.setFailed(`latest tag name is not valid semver: ${JSON.stringify(latestTag)}`)
   }
 
-  const commits = await github.compareCommits(octokit, owner, repo, latestTag.commit.sha, context.sha)
-  console.log(commits)
-
-  const parserOpts = {
-    headerPattern: /^(\w*)(?:\((.*)\))?!?: (.*)$/,
-    breakingHeaderPattern: /^(\w*)(?:\((.*)\))?!: (.*)$/,
-    headerCorrespondence: [
-      'type',
-      'scope',
-      'subject'
-    ],
-    noteKeywords: ['BREAKING CHANGE', 'BREAKING-CHANGE'],
-    revertPattern: /^(?:Revert|revert:)\s"?([\s\S]+?)"?\s*This reverts commit (\w*)\./i,
-    revertCorrespondence: ['header', 'hash']
-  }
-
-
-  let bump = await commit.analyzeCommits({ parserOpts }, { commits, logger: { log: console.info.bind(console) } })
-  if (!bump) bump = core.getInput('default-bump')
+  // get commits from last tag and calculate version bump
+  const commits = await github.compareCommits(octokit, owner, repo, latestTag.commit.sha, sha)
+  const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
 
   const incrementedVersion = semver.inc(latestTag.name, bump)
   utils.setVersionOutputs(incrementedVersion, core.getInput('version-prefix'))

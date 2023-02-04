@@ -1,14 +1,13 @@
-const commit = require('@semantic-release/commit-analyzer')
 const semver = require('semver')
 const core = require('@actions/core')
-const { context } = require('@actions/github')
 const github = require('./github')
 const utils = require('./utils')
 
 const run = async () => {
   const octokit = github.getOctokit(core.getInput('github-token'))
 
-  const { owner, repo } = context.repo
+  const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
+  const sha = process.env.GITHUB_SHA
 
   let latestTag = ''
   try {
@@ -16,8 +15,6 @@ const run = async () => {
   } catch (err) {
     return core.setFailed(`unable to get latest tag - error: ${err.message} ${err?.response?.status}`)
   }
-
-  console.log('latestTag',latestTag)
 
   // return a default version if no previous github tags
   if (!latestTag) {
@@ -29,25 +26,9 @@ const run = async () => {
     return core.setFailed(`latest tag name is not valid semver: ${JSON.stringify(latestTag)}`)
   }
 
-  const commits = await github.compareCommits(octokit, owner, repo, latestTag.commit.sha, context.sha)
-  console.log(commits)
-
-  const parserOpts = {
-    headerPattern: /^(\w*)(?:\((.*)\))?!?: (.*)$/,
-    breakingHeaderPattern: /^(\w*)(?:\((.*)\))?!: (.*)$/,
-    headerCorrespondence: [
-      'type',
-      'scope',
-      'subject'
-    ],
-    noteKeywords: ['BREAKING CHANGE', 'BREAKING-CHANGE'],
-    revertPattern: /^(?:Revert|revert:)\s"?([\s\S]+?)"?\s*This reverts commit (\w*)\./i,
-    revertCorrespondence: ['header', 'hash']
-  }
-
-
-  let bump = await commit.analyzeCommits({ parserOpts }, { commits, logger: { log: console.info.bind(console) } })
-  if (!bump) bump = core.getInput('default-bump')
+  // get commits from last tag and calculate version bump
+  const commits = await github.compareCommits(octokit, owner, repo, latestTag.commit.sha, sha)
+  const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
 
   const incrementedVersion = semver.inc(latestTag.name, bump)
   utils.setVersionOutputs(incrementedVersion, core.getInput('version-prefix'))
