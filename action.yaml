@@ -25,6 +25,8 @@ outputs:
     description: Sematic version with prefix
   major:
     description: Major version number
+  major-with-prefix:
+    description: Major version number with prefix
   minor:
     description: Minor version number
   patch:

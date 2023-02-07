@@ -44146,6 +44146,7 @@ const setVersionOutputs = (version, prefix) => {
   core.setOutput('version', output.version)
   core.setOutput('version-with-prefix', `${prefix}${output.version}`)
   core.setOutput('major', output.major)
+  core.setOutput('major-with-prefix', `${prefix}${output.major}`)
   core.setOutput('minor', output.minor)
   core.setOutput('patch', output.patch)
 }
