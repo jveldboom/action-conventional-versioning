@@ -1,6 +1,6 @@
 /* eslint-env jest */
 const core = require('@actions/core')
-const github = require('./github')
+// const github = require('./github')
 
 jest.spyOn(core, 'setOutput')
 
