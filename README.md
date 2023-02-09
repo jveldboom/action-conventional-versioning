@@ -29,10 +29,61 @@ Design Descisions
     mode: ''
 ```
 
+## Outputs
+| Name | Description |
+|------|-------------|
+`version` | full semantic version number without prefix (`1.2.3`)
+`version-with-prefix` | version number with prefix (`v1.2.3`)
+`major` | major version number
+`major-with-prefix` | major version number with prefix (`v1`)
+`minor` | minor version number
+`patch` | patch version number
+
+## Example Use-Cases
+### Auto version on any push to the `main` branch
+```yaml
+---
+name: release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: jveldboom/action-conventional-versioning@v1
+        id: version
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.version-with-prefix }}" \
+            --generate-notes \
+            --target "${{ github.sha }}"
+
+      - name: Update Major Tag
+        env:
+          MAJOR: ${{ steps.version.outputs.major }}
+        run: |
+          git tag -d ${MAJOR} || true
+          git push origin :refs/tags/${MAJOR}
+          git tag ${MAJOR} ${GITHUB_SHA}
+          git push origin ${MAJOR}
+```
+
 ## TODO
 - [ ] Compete unit tests and strive for 100% test coverage
-- [ ] GitHub workflow to run unit tests
-- [ ] Workflow to check dist is built - [reference](https://github.com/jveldboom/action-aws-apigw-oidc-request/blob/main/.github/workflows/pull-request.yaml#L29-L34)
+- [x] GitHub workflow to run unit tests
+- [x] Workflow to check dist is built
 - [ ] Workflow to run regresssion tests with compiled action
 - [ ] list action in marketplace
 
