@@ -17,6 +17,10 @@ inputs:
     description: Version prefix / string to prepend to version
     required: false
     default: v
+  mode:
+    description: Sets the version mode to run - future use-case
+    required: false
+    default: default
 
 outputs:
   version:

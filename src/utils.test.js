@@ -19,8 +19,9 @@ describe('utils', () => {
       expect(core.setOutput).toHaveBeenNthCalledWith(1, 'version', '2.3.4')
       expect(core.setOutput).toHaveBeenNthCalledWith(2, 'version-with-prefix', 'v2.3.4')
       expect(core.setOutput).toHaveBeenNthCalledWith(3, 'major', 2)
-      expect(core.setOutput).toHaveBeenNthCalledWith(4, 'minor', 3)
-      expect(core.setOutput).toHaveBeenNthCalledWith(5, 'patch', 4)
+      expect(core.setOutput).toHaveBeenNthCalledWith(4, 'major-with-prefix', 'v2')
+      expect(core.setOutput).toHaveBeenNthCalledWith(5, 'minor', 3)
+      expect(core.setOutput).toHaveBeenNthCalledWith(6, 'patch', 4)
     })
   })
 
