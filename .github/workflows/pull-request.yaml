@@ -1,0 +1,34 @@
+name: pull-request
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Unit test
+        run: yarn test
+
+      - name: Rebuild the dist/ directory
+        run: yarn build
+
+      - name: Compare the expected and actual dist/ directories
+        run: |
+          if [ "$(git diff --ignore-space-at-eol ./dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after build within the ./dist directory"
+            exit 1
+          fi
