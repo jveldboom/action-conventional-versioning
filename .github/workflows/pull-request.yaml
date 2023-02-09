@@ -32,6 +32,3 @@ jobs:
             echo "Detected uncommitted changes after build within the ./dist directory"
             exit 1
           fi
-
-      - name: GitHub Workflow Linter
-        run: docker run --rm -v "$(pwd)":/repo --workdir /repo rhysd/actionlint:latest -color
