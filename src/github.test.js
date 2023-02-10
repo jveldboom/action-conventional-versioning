@@ -142,5 +142,4 @@ describe('github', () => {
       expect(result).toBe('success')
     })
   })
-
 })
