@@ -73,5 +73,5 @@ jobs:
         with:
           script: |
             console.log('${{ toJSON(steps.no-input.outputs) }}')
-            console.log('${{ toJSON(steps.prefix.outputs }}'))
+            console.log('${{ toJSON(steps.prefix.outputs }})')
             console.log('${{ toJSON(steps.all-inputs.outputs) }}')
