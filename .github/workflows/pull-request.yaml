@@ -2,6 +2,9 @@ name: pull-request
 
 on:
   pull_request:
+  push:
+    branches:
+      - jveldboom/regression-test
 
 jobs:
   test:
@@ -32,3 +35,41 @@ jobs:
             echo "Detected uncommitted changes after build within the ./dist directory"
             exit 1
           fi
+
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Version - no input
+        id: no-input
+        uses: ./
+
+      - name: Version - default-bump input
+        id: default-bump
+        uses: ./
+        with:
+          default-bump: minor
+
+      - name: Version - prefix input
+        id: prefix
+        uses: ./
+        with:
+          prefix: test
+
+      - name: Version - all inputs
+        id: all-inputs
+        uses: ./
+        with:
+          default-bump: major
+          prefix: test
+
+      - name: Check outputs
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log('${{ steps.no-input.outputs }}')
