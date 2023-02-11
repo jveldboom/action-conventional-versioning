@@ -55,23 +55,23 @@ jobs:
         with:
           default-bump: minor
 
-      - name: Version - prefix input
-        id: prefix
-        uses: ./
-        with:
-          prefix: v
-
-      - name: Version - all inputs
-        id: all-inputs
-        uses: ./
-        with:
-          default-bump: major
-          prefix: v
-
       - name: Check outputs
         uses: actions/github-script@v6
         with:
           script: |
-            console.log('${{ toJSON(steps.no-input.outputs) }}')
-            console.log('${{ toJSON(steps.prefix.outputs) }}')
-            console.log('${{ toJSON(steps.all-inputs.outputs) }}')
+            const assert = require('assert')
+            const outputs = {
+              default: ${{ toJSON(steps.no-input.outputs) }},
+              defaultBump: ${{ toJSON(steps.default-bump.outputs) }}
+            }
+
+            // check default / no-input outputs
+            const [ major, minor, patch ] = outputs.default.version.split('.')
+            assert.deepEqual(outputs.default['version-with-prefix'], `v${major}.${minor}.${patch}`)
+            assert.deepEqual(outputs.default.major, major)
+            assert.deepEqual(outputs.default['major-with-prefix'], `v${major}`)
+            assert.deepEqual(outputs.default.minor, minor)
+            assert.deepEqual(outputs.default.patch, patch)
+
+            // check default-bump / minor bump
+            assert.deepEqual(Number(outputs.default.minor) + 1, outputs.defaultBump.minor)
