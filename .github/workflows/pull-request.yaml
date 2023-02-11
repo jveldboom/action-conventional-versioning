@@ -59,17 +59,19 @@ jobs:
         id: prefix
         uses: ./
         with:
-          prefix: test
+          prefix: v
 
       - name: Version - all inputs
         id: all-inputs
         uses: ./
         with:
           default-bump: major
-          prefix: test
+          prefix: v
 
       - name: Check outputs
         uses: actions/github-script@v6
         with:
           script: |
             console.log('${{ steps.no-input.outputs }}')
+            console.log('${{ steps.prefix.outputs }}')
+            console.log('${{ steps.all-inputs.outputs }}')
