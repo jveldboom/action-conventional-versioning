@@ -9,7 +9,7 @@ const run = async () => {
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
   const sha = process.env.GITHUB_SHA
 
-  let latestTag = ''
+  let latestTag
   try {
     latestTag = await github.getLatestTag(octokit, owner, repo)
   } catch (err) {
@@ -27,11 +27,13 @@ const run = async () => {
   }
 
   // get commits from last tag and calculate version bump
-  const commits = await github.compareCommits(octokit, owner, repo, latestTag.commit.sha, sha)
+  const commits = await github.compareCommits(octokit, owner, repo, latestTag?.commit?.sha, sha)
   const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
 
   const incrementedVersion = semver.inc(latestTag.name, bump)
   utils.setVersionOutputs(incrementedVersion, core.getInput('prefix'))
 }
 
-run()
+if (process.env.NODE_ENV !== 'test') run()
+
+module.exports = { run }
