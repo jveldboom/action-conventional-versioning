@@ -81,11 +81,12 @@ jobs:
 ```
 
 ## TODO
-- [ ] Compete unit tests and strive for 100% test coverage
-- [x] GitHub workflow to run unit tests
-- [x] Workflow to check dist is built
+- [ ] Release v1 of action
 - [ ] Workflow to run regresssion tests with compiled action
 - [ ] list action in marketplace
+- [ ] Improve index.js file
+  - Should it be simplified and wrapped in a try/catch?
+  - How can we get 100% test coverage on it?
 
 ## Notes
 - Commit Analyzer https://github.com/semantic-release/commit-analyzer#releaserules

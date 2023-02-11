@@ -10,7 +10,7 @@ const getLatestTag = async (octokit, owner, repo) => {
     repo
   })
 
-  if (res.data.length >= 1) return res.data[0]
+  if (res?.data?.length >= 1) return res.data[0]
 }
 
 const compareCommits = async (octokit, owner, repo, base, head) => {
