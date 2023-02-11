@@ -72,6 +72,6 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            console.log(JSON.parse('${{ steps.no-input.outputs }}'))
-            console.log(JSON.parse('${{ steps.prefix.outputs }}'))
-            console.log(JSON.parse('${{ steps.all-inputs.outputs }}'))
+            console.log('${{ toJSON(steps.no-input.outputs) }}')
+            console.log('${{ toJSON(steps.prefix.outputs }}'))
+            console.log('${{ toJSON(steps.all-inputs.outputs) }}')
