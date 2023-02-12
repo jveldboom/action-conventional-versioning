@@ -55,8 +55,8 @@ jobs:
 
             // check default / no-input outputs
             const [ major, minor, patch ] = outputs.version.split('.')
-            assert.deepEqual(outputs.default['version-with-prefix'], `v${major}.${minor}.${patch}`)
+            assert.deepEqual(outputs['version-with-prefix'], `v${major}.${minor}.${patch}`)
             assert.deepEqual(outputs.major, major)
-            assert.deepEqual(outputs.default['major-with-prefix'], `v${major}`)
+            assert.deepEqual(outputs['major-with-prefix'], `v${major}`)
             assert.deepEqual(outputs.minor, minor)
             assert.deepEqual(outputs.patch, patch)
