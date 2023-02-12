@@ -1,8 +1,8 @@
 name: Conventional Versioning
 description: GitHub Action that returns a sematic version based on Conventional Commits
 branding:
-  icon: cloud
-  color: orange
+  icon: tag
+  color: blue
 
 inputs:
   github-token:
@@ -13,10 +13,6 @@ inputs:
     description: Default version bump (major, minor, or patch)
     required: false
     default: patch
-  prefix:
-    description: Version prefix / string to prepend to version
-    required: false
-    default: v
   mode:
     description: Sets the version mode to run - future use-case
     required: false
