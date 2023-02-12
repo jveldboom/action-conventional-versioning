@@ -44138,7 +44138,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 4351:
+/***/ 2475:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const semver = __nccwpck_require__(1383)
@@ -44176,8 +44176,6 @@ const run = async () => {
   const incrementedVersion = semver.inc(latestTag.name, bump)
   utils.setVersionOutputs(incrementedVersion, core.getInput('prefix'))
 }
-
-if (process.env.NODE_ENV !== 'test') run()
 
 module.exports = { run }
 
@@ -44455,12 +44453,15 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(4351);
-/******/ 	module.exports = __webpack_exports__;
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+const run = (__nccwpck_require__(2475).run)
+
+run()
+
+})();
+
+module.exports = __webpack_exports__;
 /******/ })()
 ;

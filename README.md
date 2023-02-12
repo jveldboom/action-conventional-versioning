@@ -96,9 +96,8 @@ yarn lint
 - [x] List action in marketplace
 - [ ] Add version suffix that are semver
 - [ ] Improve integration testing to cover all use-case. May require the ability to pass in a list of commits
-- [ ] Improve index.js file
+- [ ] Improve run.js file
   - Should it be simplified and wrapped in a try/catch?
-  - How can we get 100% test coverage on it?
 
 ## Notes
 - Commit Analyzer https://github.com/semantic-release/commit-analyzer#releaserules

@@ -7,7 +7,7 @@ jest.spyOn(core, 'getInput')
 jest.spyOn(core, 'setFailed')
 jest.spyOn(core, 'setOutput')
 
-const index = require('./index')
+const run = require('./run').run
 
 describe('index', () => {
   beforeEach(() => {
@@ -24,14 +24,14 @@ describe('index', () => {
   it('should fail when unable to get latest tag', async () => {
     github.getLatestTag.mockRejectedValueOnce(new Error('test error'))
 
-    await index.run()
+    await run()
     expect(core.setFailed).toBeCalledTimes(1)
   })
 
   it('should output default version bump (0.0.1) if no previous tags', async () => {
     github.getLatestTag.mockResolvedValueOnce()
 
-    await index.run()
+    await run()
     expect(core.getInput).toHaveBeenNthCalledWith(2, 'default-bump')
     expect(core.getInput).toHaveNthReturnedWith(2, 'patch')
 
@@ -46,7 +46,7 @@ describe('index', () => {
   it('should fail when latest tag is no valid semver', async () => {
     github.getLatestTag.mockResolvedValueOnce('invalid-semver')
 
-    await index.run()
+    await run()
     expect(core.setFailed).toBeCalledTimes(1)
     expect(core.setFailed).toHaveBeenNthCalledWith(1, 'latest tag name is not valid semver: "invalid-semver"')
   })
@@ -59,7 +59,7 @@ describe('index', () => {
     github.getLatestTag.mockResolvedValueOnce(latestTag)
     github.compareCommits.mockResolvedValueOnce([])
 
-    await index.run()
+    await run()
 
     expect(core.setOutput).toHaveBeenNthCalledWith(1, 'version', '1.2.4')
     expect(core.setOutput).toHaveBeenNthCalledWith(2, 'version-with-prefix', 'v1.2.4')
