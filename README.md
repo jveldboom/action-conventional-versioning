@@ -80,10 +80,26 @@ jobs:
           git push origin ${MAJOR}
 ```
 
+## Contribute
+I'll take all the help I can get so please feel free to contribute in anyway! Spelling & grammar errors, improve testing. Please check out the TODO list below for known items I'd like to resolve.
+
+```shell
+# install dependencies
+yarn install
+
+# unit Tests
+yarn test:watch
+
+# lint code via standardjs
+yarn lint
+```
+
 ## TODO
-- [ ] Release v1 of action
+- [x] Release v1 of action
 - [x] Workflow to run regresssion tests with compiled action
-- [ ] list action in marketplace
+- [x] List action in marketplace
+- [ ] Add version suffix that are semver
+- [ ] Improve integration testing to cover all use-case. May require the ability to pass in a list of commits
 - [ ] Improve index.js file
   - Should it be simplified and wrapped in a try/catch?
   - How can we get 100% test coverage on it?
