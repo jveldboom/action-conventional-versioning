@@ -1,3 +1,8 @@
-const run = require('./run').run
+const core = require('@actions/core')
+const run = require('./run')
 
-run()
+try {
+  run()
+} catch (err) {
+  core.setFailed(err.message)
+}

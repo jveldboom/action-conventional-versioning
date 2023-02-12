@@ -7,7 +7,7 @@ jest.spyOn(core, 'getInput')
 jest.spyOn(core, 'setFailed')
 jest.spyOn(core, 'setOutput')
 
-const run = require('./run').run
+const run = require('./run')
 
 describe('index', () => {
   beforeEach(() => {
