@@ -32,3 +32,43 @@ jobs:
             echo "Detected uncommitted changes after build within the ./dist directory"
             exit 1
           fi
+
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Version - no input
+        id: no-input
+        uses: ./
+
+      - name: Version - default-bump input
+        id: default-bump
+        uses: ./
+        with:
+          default-bump: minor
+
+      - name: Check outputs
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const assert = require('assert')
+            const outputs = {
+              default: ${{ toJSON(steps.no-input.outputs) }},
+              defaultBump: ${{ toJSON(steps.default-bump.outputs) }}
+            }
+
+            // check default / no-input outputs
+            const [ major, minor, patch ] = outputs.default.version.split('.')
+            assert.deepEqual(outputs.default['version-with-prefix'], `v${major}.${minor}.${patch}`)
+            assert.deepEqual(outputs.default.major, major)
+            assert.deepEqual(outputs.default['major-with-prefix'], `v${major}`)
+            assert.deepEqual(outputs.default.minor, minor)
+            assert.deepEqual(outputs.default.patch, patch)
+
+            // check minor bump
+            assert.deepEqual(Number(outputs.default.minor) + 1, outputs.defaultBump.minor)

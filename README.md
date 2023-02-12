@@ -82,7 +82,7 @@ jobs:
 
 ## TODO
 - [ ] Release v1 of action
-- [ ] Workflow to run regresssion tests with compiled action
+- [x] Workflow to run regresssion tests with compiled action
 - [ ] list action in marketplace
 - [ ] Improve index.js file
   - Should it be simplified and wrapped in a try/catch?
