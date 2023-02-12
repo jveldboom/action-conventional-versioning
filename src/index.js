@@ -1,8 +1,10 @@
 const core = require('@actions/core')
-const run = require('./run')
+const run = require('./run'); // semicolon is intentional for standardjs
 
-try {
-  run()
-} catch (err) {
-  core.setFailed(err.message)
-}
+(async () => {
+  try {
+    await run()
+  } catch (err) {
+    core.setFailed(err.message)
+  }
+})()
