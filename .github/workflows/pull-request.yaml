@@ -2,9 +2,6 @@ name: pull-request
 
 on:
   pull_request:
-  push:
-    branches:
-      - jveldboom/regression-test
 
 jobs:
   test:
@@ -73,5 +70,5 @@ jobs:
             assert.deepEqual(outputs.default.minor, minor)
             assert.deepEqual(outputs.default.patch, patch)
 
-            // check default-bump / minor bump
+            // check minor bump
             assert.deepEqual(Number(outputs.default.minor) + 1, outputs.defaultBump.minor)
