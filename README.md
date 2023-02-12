@@ -20,10 +20,6 @@ Design Descisions
     # Default: minor
     default-bump: ''
 
-    # Version prefix
-    # Default: v
-    prefix: ''
-
     # Set the versioning mode to run (future use-case)
     # Default: default
     mode: ''
@@ -32,10 +28,10 @@ Design Descisions
 ## Outputs
 | Name | Description |
 |------|-------------|
-`version` | full semantic version number without prefix (`1.2.3`)
-`version-with-prefix` | version number with prefix (`v1.2.3`)
+`version` | full semantic version number (`1.2.3`)
+`version-with-prefix` | version number with `v` prefix (`v1.2.3`)
 `major` | major version number
-`major-with-prefix` | major version number with prefix (`v1`)
+`major-with-prefix` | major version number with `v` prefix (`v1`)
 `minor` | minor version number
 `patch` | patch version number
 

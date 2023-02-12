@@ -3,17 +3,16 @@ const semver = require('semver')
 const commit = require('@semantic-release/commit-analyzer')
 
 /**
- * Output version spec
+ * Output version details
  * @param {string} version version number
- * @param {string} prefix version prefix
  */
-const setVersionOutputs = (version, prefix) => {
-  const output = semver.parse(`${prefix}${version}`)
+const setVersionOutputs = (version) => {
+  const output = semver.parse(version)
 
   core.setOutput('version', output.version)
-  core.setOutput('version-with-prefix', `${prefix}${output.version}`)
+  core.setOutput('version-with-prefix', `v${output.version}`)
   core.setOutput('major', output.major)
-  core.setOutput('major-with-prefix', `${prefix}${output.major}`)
+  core.setOutput('major-with-prefix', `v${output.major}`)
   core.setOutput('minor', output.minor)
   core.setOutput('patch', output.patch)
 }
