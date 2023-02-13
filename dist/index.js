@@ -44146,7 +44146,7 @@ const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(8396)
 const utils = __nccwpck_require__(1608)
 
-const run = async () => {
+module.exports = async () => {
   const octokit = github.getOctokit(core.getInput('github-token'))
 
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
@@ -44176,8 +44176,6 @@ const run = async () => {
   const incrementedVersion = semver.inc(latestTag.name, bump)
   utils.setVersionOutputs(incrementedVersion, core.getInput('prefix'))
 }
-
-module.exports = { run }
 
 
 /***/ }),
@@ -44456,9 +44454,16 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const run = (__nccwpck_require__(2475).run)
+const core = __nccwpck_require__(2186)
+const run = __nccwpck_require__(2475); // semicolon is intentional for standardjs
 
-run()
+(async () => {
+  try {
+    await run()
+  } catch (err) {
+    core.setFailed(err.message)
+  }
+})()
 
 })();
 

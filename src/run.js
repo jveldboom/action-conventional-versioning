@@ -3,7 +3,7 @@ const core = require('@actions/core')
 const github = require('./github')
 const utils = require('./utils')
 
-const run = async () => {
+module.exports = async () => {
   const octokit = github.getOctokit(core.getInput('github-token'))
 
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
@@ -33,5 +33,3 @@ const run = async () => {
   const incrementedVersion = semver.inc(latestTag.name, bump)
   utils.setVersionOutputs(incrementedVersion, core.getInput('prefix'))
 }
-
-module.exports = { run }
