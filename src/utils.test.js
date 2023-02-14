@@ -15,7 +15,7 @@ describe('utils', () => {
 
   describe('setVersionOutputs()', () => {
     it('should set output for all values', () => {
-      utils.setVersionOutputs('2.3.4', 'v')
+      utils.setVersionOutputs('2.3.4')
       expect(core.setOutput).toHaveBeenNthCalledWith(1, 'version', '2.3.4')
       expect(core.setOutput).toHaveBeenNthCalledWith(2, 'version-with-prefix', 'v2.3.4')
       expect(core.setOutput).toHaveBeenNthCalledWith(3, 'major', 2)

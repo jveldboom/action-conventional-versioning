@@ -19,7 +19,7 @@ module.exports = async () => {
   // return a default version if no previous github tags
   if (!latestTag) {
     const incrementedVersion = semver.inc('0.0.0', core.getInput('default-bump'))
-    return utils.setVersionOutputs(incrementedVersion, core.getInput('prefix'))
+    return utils.setVersionOutputs(incrementedVersion)
   }
 
   if (!semver.valid(latestTag.name)) {
@@ -31,5 +31,5 @@ module.exports = async () => {
   const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
 
   const incrementedVersion = semver.inc(latestTag.name, bump)
-  utils.setVersionOutputs(incrementedVersion, core.getInput('prefix'))
+  utils.setVersionOutputs(incrementedVersion)
 }
