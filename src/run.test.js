@@ -14,7 +14,6 @@ describe('index', () => {
     process.env.GITHUB_REPOSITORY = 'foo/bar'
     process.env['INPUT_GITHUB-TOKEN'] = 'test-token'
     process.env['INPUT_DEFAULT-BUMP'] = 'patch'
-    process.env.INPUT_PREFIX = 'v'
   })
 
   afterEach(() => {
