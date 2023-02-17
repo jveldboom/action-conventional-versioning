@@ -4,7 +4,7 @@ const getOctokit = (token) => {
   return github.getOctokit(token)
 }
 
-const getLatestRelease = async (octokit, owner, repo, ignoreDrafts = false, ignorePrereleases = false) => {
+const getLatestRelease = async ({ octokit, owner, repo, ignoreDrafts = false, ignorePrereleases = false }) => {
   const res = await octokit.request('GET /repos/{owner}/{repo}/releases', {
     owner,
     repo

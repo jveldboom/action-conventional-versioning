@@ -11,7 +11,13 @@ module.exports = async () => {
 
   let latestTag
   try {
-    latestTag = await github.getLatestRelease(octokit, owner, repo)
+    latestTag = await github.getLatestRelease({
+      octokit,
+      owner,
+      repo,
+      ignoreDrafts: core.getInput('ignore-drafts'),
+      ignorePrereleases: core.getInput('ignore-prereleases')
+    })
   } catch (err) {
     return core.setFailed(`unable to get latest release - error: ${err.message} ${err?.response?.status}`)
   }

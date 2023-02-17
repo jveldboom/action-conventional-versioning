@@ -31,8 +31,8 @@ describe('index', () => {
     github.getLatestRelease.mockResolvedValueOnce()
 
     await run()
-    expect(core.getInput).toHaveBeenNthCalledWith(2, 'default-bump')
-    expect(core.getInput).toHaveNthReturnedWith(2, 'patch')
+    expect(core.getInput).toHaveBeenNthCalledWith(4, 'default-bump')
+    expect(core.getInput).toHaveNthReturnedWith(4, 'patch')
 
     expect(core.setOutput).toHaveBeenNthCalledWith(1, 'version', '0.0.1')
     expect(core.setOutput).toHaveBeenNthCalledWith(2, 'version-with-prefix', 'v0.0.1')

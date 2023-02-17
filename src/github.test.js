@@ -24,7 +24,7 @@ describe('github', () => {
 
   describe('getLatestRelease()', () => {
     it('should return undefined when no releases', async () => {
-      const rel = await github.getLatestRelease(mockOctokit, 'owner', 'repo')
+      const rel = await github.getLatestRelease({ octokit: mockOctokit, owner: 'owner', repo: 'repo' })
       expect(rel).toBe(undefined)
     })
 
@@ -39,7 +39,7 @@ describe('github', () => {
         }
       })
 
-      const rel = await github.getLatestRelease(mockOctokit, 'owner', 'repo')
+      const rel = await github.getLatestRelease({ octokit: mockOctokit, owner: 'owner', repo: 'repo' })
       expect(rel).toStrictEqual({ name: 'v1.0' })
     })
   })
