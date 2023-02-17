@@ -7,14 +7,13 @@ jest.spyOn(core, 'getInput')
 jest.spyOn(core, 'setFailed')
 jest.spyOn(core, 'setOutput')
 
-const index = require('./index')
+const run = require('./run')
 
 describe('index', () => {
   beforeEach(() => {
     process.env.GITHUB_REPOSITORY = 'foo/bar'
     process.env['INPUT_GITHUB-TOKEN'] = 'test-token'
     process.env['INPUT_DEFAULT-BUMP'] = 'patch'
-    process.env.INPUT_PREFIX = 'v'
   })
 
   afterEach(() => {
@@ -24,14 +23,14 @@ describe('index', () => {
   it('should fail when unable to get latest tag', async () => {
     github.getLatestRelease.mockRejectedValueOnce(new Error('test error'))
 
-    await index.run()
+    await run()
     expect(core.setFailed).toBeCalledTimes(1)
   })
 
   it('should output default version bump (0.0.1) if no previous tags', async () => {
     github.getLatestRelease.mockResolvedValueOnce()
 
-    await index.run()
+    await run()
     expect(core.getInput).toHaveBeenNthCalledWith(2, 'default-bump')
     expect(core.getInput).toHaveNthReturnedWith(2, 'patch')
 
@@ -46,7 +45,7 @@ describe('index', () => {
   it('should fail when latest tag is no valid semver', async () => {
     github.getLatestRelease.mockResolvedValueOnce('invalid-semver')
 
-    await index.run()
+    await run()
     expect(core.setFailed).toBeCalledTimes(1)
     expect(core.setFailed).toHaveBeenNthCalledWith(1, 'latest tag name is not valid semver: "invalid-semver"')
   })
@@ -59,7 +58,7 @@ describe('index', () => {
     github.getLatestRelease.mockResolvedValueOnce(latestTag)
     github.compareCommits.mockResolvedValueOnce([])
 
-    await index.run()
+    await run()
 
     expect(core.setOutput).toHaveBeenNthCalledWith(1, 'version', '1.2.4')
     expect(core.setOutput).toHaveBeenNthCalledWith(2, 'version-with-prefix', 'v1.2.4')

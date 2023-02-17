@@ -94,12 +94,19 @@ yarn lint
 - [x] Release v1 of action
 - [x] Workflow to run regresssion tests with compiled action
 - [x] List action in marketplace
+<<<<<<< HEAD
 - [x] Improve index.js file
   - Should it be simplified and wrapped in a try/catch?
   - How can we get 100% test coverage on it?
 - [ ] Add version suffix that are semver
 - [ ] Improve integration testing to cover all use-case. May require the ability to pass in a list of commits
 - [ ] Output version bump (major, minor, patch) No specific use case but I believe it will be useful
+=======
+- [ ] Add version suffix that are semver
+- [ ] Improve integration testing to cover all use-case. May require the ability to pass in a list of commits
+- [ ] Improve run.js file
+  - Should it be simplified and wrapped in a try/catch?
+>>>>>>> main
 
 ## Notes
 - Commit Analyzer https://github.com/semantic-release/commit-analyzer#releaserules

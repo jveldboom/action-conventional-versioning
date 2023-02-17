@@ -44138,7 +44138,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 4351:
+/***/ 2475:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const semver = __nccwpck_require__(1383)
@@ -44146,7 +44146,7 @@ const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(8396)
 const utils = __nccwpck_require__(1608)
 
-const run = async () => {
+module.exports = async () => {
   const octokit = github.getOctokit(core.getInput('github-token'))
 
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
@@ -44162,7 +44162,7 @@ const run = async () => {
   // return a default version if no previous github tags
   if (!latestTag) {
     const incrementedVersion = semver.inc('0.0.0', core.getInput('default-bump'))
-    return utils.setVersionOutputs(incrementedVersion, core.getInput('prefix'))
+    return utils.setVersionOutputs(incrementedVersion)
   }
 
   if (!semver.valid(latestTag.name)) {
@@ -44174,12 +44174,8 @@ const run = async () => {
   const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
 
   const incrementedVersion = semver.inc(latestTag.name, bump)
-  utils.setVersionOutputs(incrementedVersion, core.getInput('prefix'))
+  utils.setVersionOutputs(incrementedVersion)
 }
-
-if (process.env.NODE_ENV !== 'test') run()
-
-module.exports = { run }
 
 
 /***/ }),
@@ -44455,12 +44451,22 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(4351);
-/******/ 	module.exports = __webpack_exports__;
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+const core = __nccwpck_require__(2186)
+const run = __nccwpck_require__(2475); // semicolon is intentional for standardjs
+
+(async () => {
+  try {
+    await run()
+  } catch (err) {
+    core.setFailed(err.message)
+  }
+})()
+
+})();
+
+module.exports = __webpack_exports__;
 /******/ })()
 ;
