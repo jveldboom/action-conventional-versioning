@@ -44165,9 +44165,9 @@ module.exports = async () => {
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
   const sha = process.env.GITHUB_SHA
 
-  let latestTag
+  let latestRelease
   try {
-    latestTag = await github.getLatestRelease({
+    latestRelease = await github.getLatestRelease({
       octokit,
       owner,
       repo,
@@ -44179,20 +44179,20 @@ module.exports = async () => {
   }
 
   // return a default version if no previous github tags
-  if (!latestTag) {
+  if (!latestRelease) {
     const incrementedVersion = semver.inc('0.0.0', core.getInput('default-bump'))
     return utils.setVersionOutputs(incrementedVersion)
   }
 
-  if (!semver.valid(latestTag.name)) {
-    return core.setFailed(`latest tag name is not valid semver: ${JSON.stringify(latestTag)}`)
+  if (!semver.valid(latestRelease.name)) {
+    return core.setFailed(`latest tag name is not valid semver: ${JSON.stringify(latestRelease)}`)
   }
 
   // get commits from last tag and calculate version bump
-  const commits = await github.compareCommits(octokit, owner, repo, latestTag?.commit?.sha, sha)
+  const commits = await github.compareCommits(octokit, owner, repo, latestRelease.target_commitish, sha)
   const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
 
-  const incrementedVersion = semver.inc(latestTag.name, bump)
+  const incrementedVersion = semver.inc(latestRelease.name, bump)
   utils.setVersionOutputs(incrementedVersion)
 }
 
