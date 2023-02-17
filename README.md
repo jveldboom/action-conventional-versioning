@@ -45,7 +45,7 @@ Design Descisions
 
 ## Example Use-Cases
 ### Auto version on any push to the `main` branch
-This example will create a new GitHub release on any push to main as well as update the floating major version `v1`
+This example will create a new GitHub release on any push to the `main` branch as well as update the floating major version (eg `v1`)
 
 ```yaml
 ---
@@ -93,23 +93,22 @@ I'll take all the help I can get so please feel free to contribute in anyway! Sp
 # install dependencies
 yarn install
 
-# unit Tests
+# unit tests
 yarn test:watch
 
 # lint code via standardjs
 yarn lint
+
+# build distribution bundle
+yarn build
 ```
 
 ## TODO
-- [x] Release v1 of action
-- [x] Workflow to run regresssion tests with compiled action
-- [x] List action in marketplace
-- [x] Improve index.js file
-  - Should it be simplified and wrapped in a try/catch?
-  - How can we get 100% test coverage on it?
 - [ ] Add version suffix that are semver
 - [ ] Improve integration testing to cover all use-case. May require the ability to pass in a list of commits
 - [ ] Output version bump (major, minor, patch) No specific use case but I believe it will be useful
+- [ ] Better error messaging for all GH API calls.
+  - [This call](https://github.com/jveldboom/action-conventional-versioning/blob/main/src/run.js#L36) is currently only caught by outside try/catch
 
 ## Notes
 - Commit Analyzer https://github.com/semantic-release/commit-analyzer#releaserules
