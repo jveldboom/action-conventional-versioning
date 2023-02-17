@@ -15,8 +15,8 @@ module.exports = async () => {
       octokit,
       owner,
       repo,
-      ignoreDrafts: core.getInput('ignore-drafts'),
-      ignorePrereleases: core.getInput('ignore-prereleases')
+      ignoreDrafts: core.getBooleanInput('ignore-drafts'),
+      ignorePrereleases: core.getBooleanInput('ignore-prereleases')
     })
   } catch (err) {
     return core.setFailed(`unable to get latest release - error: ${err.message} ${err?.response?.status}`)
