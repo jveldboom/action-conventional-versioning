@@ -17,7 +17,7 @@ Design Descisions
     # Default version bump (major, minor or patch)
     # Used when unable to calculate the bump from the commit messages
     # For example when not using conventional commits
-    # Default: minor
+    # Default: patch
     default-bump: ''
 
     # Ignore prereleases when calculating the next version
@@ -46,6 +46,7 @@ Design Descisions
 ## Example Use-Cases
 ### Auto version on any push to the `main` branch
 This example will create a new GitHub release on any push to main as well as update the floating major version `v1`
+
 ```yaml
 ---
 name: release
