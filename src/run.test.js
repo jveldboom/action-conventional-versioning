@@ -4,16 +4,19 @@ const github = require('./github')
 
 jest.mock('./github')
 jest.spyOn(core, 'getInput')
+jest.spyOn(core, 'getBooleanInput')
 jest.spyOn(core, 'setFailed')
 jest.spyOn(core, 'setOutput')
 
 const run = require('./run')
 
-describe('index', () => {
+describe('run', () => {
   beforeEach(() => {
     process.env.GITHUB_REPOSITORY = 'foo/bar'
     process.env['INPUT_GITHUB-TOKEN'] = 'test-token'
     process.env['INPUT_DEFAULT-BUMP'] = 'patch'
+    process.env['INPUT_IGNORE-DRAFTS'] = false
+    process.env['INPUT_IGNORE-PRERELEASES'] = false
   })
 
   afterEach(() => {
@@ -31,9 +34,13 @@ describe('index', () => {
     github.getLatestRelease.mockResolvedValueOnce()
 
     await run()
-    expect(core.getInput).toHaveBeenNthCalledWith(4, 'default-bump')
-    expect(core.getInput).toHaveNthReturnedWith(4, 'patch')
+    // check core.input are called with expected values
+    expect(core.getBooleanInput).toHaveBeenNthCalledWith(1, 'ignore-drafts')
+    expect(core.getBooleanInput).toHaveBeenNthCalledWith(2, 'ignore-prereleases')
+    expect(core.getInput).toHaveBeenNthCalledWith(2, 'default-bump')
+    expect(core.getInput).toHaveNthReturnedWith(2, 'patch')
 
+    // check all outputs are returning expected values
     expect(core.setOutput).toHaveBeenNthCalledWith(1, 'version', '0.0.1')
     expect(core.setOutput).toHaveBeenNthCalledWith(2, 'version-with-prefix', 'v0.0.1')
     expect(core.setOutput).toHaveBeenNthCalledWith(3, 'major', 0)
