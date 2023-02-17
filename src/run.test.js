@@ -4,16 +4,19 @@ const github = require('./github')
 
 jest.mock('./github')
 jest.spyOn(core, 'getInput')
+jest.spyOn(core, 'getBooleanInput')
 jest.spyOn(core, 'setFailed')
 jest.spyOn(core, 'setOutput')
 
 const run = require('./run')
 
-describe('index', () => {
+describe('run', () => {
   beforeEach(() => {
     process.env.GITHUB_REPOSITORY = 'foo/bar'
     process.env['INPUT_GITHUB-TOKEN'] = 'test-token'
     process.env['INPUT_DEFAULT-BUMP'] = 'patch'
+    process.env['INPUT_IGNORE-DRAFTS'] = false
+    process.env['INPUT_IGNORE-PRERELEASES'] = false
   })
 
   afterEach(() => {
@@ -21,19 +24,23 @@ describe('index', () => {
   })
 
   it('should fail when unable to get latest tag', async () => {
-    github.getLatestTag.mockRejectedValueOnce(new Error('test error'))
+    github.getLatestRelease.mockRejectedValueOnce(new Error('test error'))
 
     await run()
     expect(core.setFailed).toBeCalledTimes(1)
   })
 
   it('should output default version bump (0.0.1) if no previous tags', async () => {
-    github.getLatestTag.mockResolvedValueOnce()
+    github.getLatestRelease.mockResolvedValueOnce()
 
     await run()
+    // check core.input are called with expected values
+    expect(core.getBooleanInput).toHaveBeenNthCalledWith(1, 'ignore-drafts')
+    expect(core.getBooleanInput).toHaveBeenNthCalledWith(2, 'ignore-prereleases')
     expect(core.getInput).toHaveBeenNthCalledWith(2, 'default-bump')
     expect(core.getInput).toHaveNthReturnedWith(2, 'patch')
 
+    // check all outputs are returning expected values
     expect(core.setOutput).toHaveBeenNthCalledWith(1, 'version', '0.0.1')
     expect(core.setOutput).toHaveBeenNthCalledWith(2, 'version-with-prefix', 'v0.0.1')
     expect(core.setOutput).toHaveBeenNthCalledWith(3, 'major', 0)
@@ -43,7 +50,7 @@ describe('index', () => {
   })
 
   it('should fail when latest tag is no valid semver', async () => {
-    github.getLatestTag.mockResolvedValueOnce('invalid-semver')
+    github.getLatestRelease.mockResolvedValueOnce('invalid-semver')
 
     await run()
     expect(core.setFailed).toBeCalledTimes(1)
@@ -55,7 +62,7 @@ describe('index', () => {
       name: 'v1.2.3',
       commit: { sha: '123456789' }
     }
-    github.getLatestTag.mockResolvedValueOnce(latestTag)
+    github.getLatestRelease.mockResolvedValueOnce(latestTag)
     github.compareCommits.mockResolvedValueOnce([])
 
     await run()

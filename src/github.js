@@ -4,13 +4,25 @@ const getOctokit = (token) => {
   return github.getOctokit(token)
 }
 
-const getLatestTag = async (octokit, owner, repo) => {
-  const res = await octokit.request('GET /repos/{owner}/{repo}/tags?per_page=1', {
+const getLatestRelease = async ({ octokit, owner, repo, ignoreDrafts = false, ignorePrereleases = false }) => {
+  const res = await octokit.request('GET /repos/{owner}/{repo}/releases', {
     owner,
     repo
   })
 
-  if (res?.data?.length >= 1) return res.data[0]
+  if (!Array.isArray(res?.data) || res?.data?.length < 1) return
+  return filterAndSortReleases({ releases: res.data, ignoreDrafts, ignorePrereleases })
+}
+
+const filterAndSortReleases = ({ releases = [], ignoreDrafts = false, ignorePrereleases = false }) => {
+  // apply filters to releases
+  if (ignoreDrafts) releases = releases.filter(r => r.draft !== true)
+  if (ignorePrereleases) releases = releases.filter(r => r.prerelease !== true)
+
+  // return early if all releases were filtered out
+  if (releases.length === 0) return
+
+  return releases[0]
 }
 
 const compareCommits = async (octokit, owner, repo, base, head) => {
@@ -39,7 +51,8 @@ const createRelease = async (octokit, owner, repo, tag) => {
 
 module.exports = {
   getOctokit,
-  getLatestTag,
+  getLatestRelease,
+  filterAndSortReleases,
   compareCommits,
   createRelease
 }

@@ -17,8 +17,16 @@ Design Descisions
     # Default version bump (major, minor or patch)
     # Used when unable to calculate the bump from the commit messages
     # For example when not using conventional commits
-    # Default: minor
+    # Default: patch
     default-bump: ''
+
+    # Ignore prereleases when calculating the next version
+    # Default: false
+    ignore-drafts: ''
+
+    # Ignore draft releases when calculating the next version
+    # Default: false
+    ignore-prereleases: ''
 
     # Set the versioning mode to run (future use-case)
     # Default: default
@@ -37,6 +45,8 @@ Design Descisions
 
 ## Example Use-Cases
 ### Auto version on any push to the `main` branch
+This example will create a new GitHub release on any push to main as well as update the floating major version `v1`
+
 ```yaml
 ---
 name: release
@@ -94,10 +104,12 @@ yarn lint
 - [x] Release v1 of action
 - [x] Workflow to run regresssion tests with compiled action
 - [x] List action in marketplace
+- [x] Improve index.js file
+  - Should it be simplified and wrapped in a try/catch?
+  - How can we get 100% test coverage on it?
 - [ ] Add version suffix that are semver
 - [ ] Improve integration testing to cover all use-case. May require the ability to pass in a list of commits
-- [ ] Improve run.js file
-  - Should it be simplified and wrapped in a try/catch?
+- [ ] Output version bump (major, minor, patch) No specific use case but I believe it will be useful
 
 ## Notes
 - Commit Analyzer https://github.com/semantic-release/commit-analyzer#releaserules

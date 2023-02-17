@@ -44095,13 +44095,25 @@ const getOctokit = (token) => {
   return github.getOctokit(token)
 }
 
-const getLatestTag = async (octokit, owner, repo) => {
-  const res = await octokit.request('GET /repos/{owner}/{repo}/tags?per_page=1', {
+const getLatestRelease = async ({ octokit, owner, repo, ignoreDrafts = false, ignorePrereleases = false }) => {
+  const res = await octokit.request('GET /repos/{owner}/{repo}/releases', {
     owner,
     repo
   })
 
-  if (res?.data?.length >= 1) return res.data[0]
+  if (!Array.isArray(res?.data) || res?.data?.length < 1) return
+  return filterAndSortReleases({ releases: res.data, ignoreDrafts, ignorePrereleases })
+}
+
+const filterAndSortReleases = ({ releases = [], ignoreDrafts = false, ignorePrereleases = false }) => {
+  // apply filters to releases
+  if (ignoreDrafts) releases = releases.filter(r => r.draft !== true)
+  if (ignorePrereleases) releases = releases.filter(r => r.prerelease !== true)
+
+  // return early if all releases were filtered out
+  if (releases.length === 0) return
+
+  return releases[0]
 }
 
 const compareCommits = async (octokit, owner, repo, base, head) => {
@@ -44130,7 +44142,8 @@ const createRelease = async (octokit, owner, repo, tag) => {
 
 module.exports = {
   getOctokit,
-  getLatestTag,
+  getLatestRelease,
+  filterAndSortReleases,
   compareCommits,
   createRelease
 }
@@ -44152,28 +44165,34 @@ module.exports = async () => {
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
   const sha = process.env.GITHUB_SHA
 
-  let latestTag
+  let latestRelease
   try {
-    latestTag = await github.getLatestTag(octokit, owner, repo)
+    latestRelease = await github.getLatestRelease({
+      octokit,
+      owner,
+      repo,
+      ignoreDrafts: core.getBooleanInput('ignore-drafts'),
+      ignorePrereleases: core.getBooleanInput('ignore-prereleases')
+    })
   } catch (err) {
-    return core.setFailed(`unable to get latest tag - error: ${err.message} ${err?.response?.status}`)
+    return core.setFailed(`unable to get latest release - error: ${err.message} ${err?.response?.status}`)
   }
 
   // return a default version if no previous github tags
-  if (!latestTag) {
+  if (!latestRelease) {
     const incrementedVersion = semver.inc('0.0.0', core.getInput('default-bump'))
     return utils.setVersionOutputs(incrementedVersion)
   }
 
-  if (!semver.valid(latestTag.name)) {
-    return core.setFailed(`latest tag name is not valid semver: ${JSON.stringify(latestTag)}`)
+  if (!semver.valid(latestRelease.name)) {
+    return core.setFailed(`latest tag name is not valid semver: ${JSON.stringify(latestRelease)}`)
   }
 
   // get commits from last tag and calculate version bump
-  const commits = await github.compareCommits(octokit, owner, repo, latestTag?.commit?.sha, sha)
+  const commits = await github.compareCommits(octokit, owner, repo, latestRelease.target_commitish, sha)
   const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
 
-  const incrementedVersion = semver.inc(latestTag.name, bump)
+  const incrementedVersion = semver.inc(latestRelease.name, bump)
   utils.setVersionOutputs(incrementedVersion)
 }
 
