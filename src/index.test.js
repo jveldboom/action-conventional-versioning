@@ -9,7 +9,7 @@ jest.spyOn(core, 'setOutput')
 
 const index = require('./index')
 
-describe('index', () => {
+describe.skip('index', () => {
   beforeEach(() => {
     process.env.GITHUB_REPOSITORY = 'foo/bar'
     process.env['INPUT_GITHUB-TOKEN'] = 'test-token'

@@ -4,27 +4,24 @@ const getOctokit = (token) => {
   return github.getOctokit(token)
 }
 
-const getLatestRelease = async (octokit, owner, repo, ignoreDraft = false, ignorePrerelease = false) => {
+const getLatestRelease = async (octokit, owner, repo, ignoreDrafts = false, ignorePrereleases = false) => {
   const res = await octokit.request('GET /repos/{owner}/{repo}/releases', {
     owner,
     repo
   })
 
-  if (res?.data?.length < 1) return
-  return filterAndSortReleases(res.data)
+  if (!Array.isArray(res?.data) || res?.data?.length < 1) return
+  return filterAndSortReleases({ releases: res.data, ignoreDrafts, ignorePrereleases })
 }
 
-const filterAndSortReleases = ({ releases = [], ignoreDraft = false, ignorePrerelease = false }) => {
+const filterAndSortReleases = ({ releases = [], ignoreDrafts = false, ignorePrereleases = false }) => {
   // apply filters to releases
-  if (ignoreDraft) releases = releases.filter(res => res.draft === false)
-  if (ignorePrerelease) releases = releases.filter(res => res.prerelease === false)
+  if (ignoreDrafts) releases = releases.filter(r => r.draft !== true)
+  if (ignorePrereleases) releases = releases.filter(r => r.prerelease !== true)
 
   // return early if all releases were filtered out
   if (releases.length === 0) return
 
-  // GH API should return sorted by 'created_at' (https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#get-the-latest-release)
-  // but double checking since we are doing filtering above
-  releases.sort((a, b) => a.created_at < b.created_at ? 1 : -1)
   return releases[0]
 }
 

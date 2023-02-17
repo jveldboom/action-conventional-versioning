@@ -14,73 +14,82 @@ jest.mock('@actions/github', () => {
 })
 
 describe('github', () => {
+  afterEach(() => { jest.clearAllMocks() })
+
   describe('getOctokit', () => {
     it('wraps @actions/github\'s getOctokit', () => {
       expect(github.getOctokit()).toBe(mockOctokit)
     })
   })
 
-  describe('getLatestTag', () => {
-    let tag
-
-    afterEach(() => {
-      tag = undefined
+  describe('getLatestRelease()', () => {
+    it('should return undefined when no releases', async () => {
+      const rel = await github.getLatestRelease(mockOctokit, 'owner', 'repo')
+      expect(rel).toBe(undefined)
     })
 
-    describe('when the targeted repo has existing tags', () => {
-      beforeEach(async () => {
-        mockOctokit.request.mockImplementation(() => {
-          return {
-            data: ['1.0.0']
-          }
-        })
-
-        tag = await github.getLatestTag(mockOctokit, 'owner', 'repo')
+    it('should return a single release', async () => {
+      mockOctokit.request.mockImplementation(() => {
+        return {
+          data: [
+            { name: 'v1.0' },
+            { name: 'v1.2' },
+            { name: 'v1.3' }
+          ]
+        }
       })
 
-      it('fetches the repo\'s tags via the GitHub API', () => {
-        expect(mockOctokit.request).toHaveBeenCalledWith('GET /repos/{owner}/{repo}/tags?per_page=1', {
-          owner: 'owner',
-          repo: 'repo'
-        })
-      })
+      const rel = await github.getLatestRelease(mockOctokit, 'owner', 'repo')
+      expect(rel).toStrictEqual({ name: 'v1.0' })
+    })
+  })
 
-      it('returns the latest tag returned by the GitHub API', () => {
-        expect(tag).toBe('1.0.0')
-      })
+  describe('filterAndSortReleases()', () => {
+    it('should return undefined when no releases', () => {
+      const res = github.filterAndSortReleases({})
+      expect(res).toBe(undefined)
     })
 
-    describe('when the targeted repo has no existing tags', () => {
-      beforeEach(async () => {
-        mockOctokit.request.mockImplementation(() => {
-          return {
-            data: []
-          }
-        })
-
-        tag = await github.getLatestTag(mockOctokit, 'owner', 'repo')
-      })
-
-      it('fetches the repo\'s tags via the GitHub API', () => {
-        expect(mockOctokit.request).toHaveBeenCalledWith('GET /repos/{owner}/{repo}/tags?per_page=1', {
-          owner: 'owner',
-          repo: 'repo'
-        })
-      })
-
-      it('returns undefined', () => {
-        expect(tag).toBe(undefined)
-      })
+    it('should filter out draft releases and return single release', () => {
+      const releases = [
+        { name: 'v1.0.0', draft: true, prerelease: false },
+        { name: 'v1.1.0', draft: false, prerelease: false },
+        { name: 'v1.2.0', draft: false, prerelease: false }
+      ]
+      const res = github.filterAndSortReleases({ releases, ignoreDrafts: true })
+      expect(res).toStrictEqual(releases[1])
     })
 
-    describe('when the underlying octokit API request fails', () => {
-      it('throws an error', async () => {
-        const result = 'error'
+    it('should filter out prereleases and return single release', () => {
+      const releases = [
+        { name: 'v1.0.0', draft: false, prerelease: true },
+        { name: 'v1.1.0', draft: false, prerelease: true },
+        { name: 'v1.2.0', draft: false, prerelease: false }
+      ]
+      const res = github.filterAndSortReleases({ releases, ignorePrereleases: true })
+      expect(res).toStrictEqual(releases[2])
+    })
 
-        mockOctokit.request.mockRejectedValueOnce(result)
+    it('should filter out draft & prereleases and return single release', () => {
+      const releases = [
+        { name: 'v1.0.0', draft: true, prerelease: false },
+        { name: 'v1.1.0', draft: false, prerelease: true },
+        { name: 'v1.2.0', draft: false, prerelease: false },
+        { name: 'v1.3.0', draft: true, prerelease: true }
 
-        await expect(github.getLatestTag(mockOctokit, 'owner', 'repo')).rejects.toMatch(result)
-      })
+      ]
+      const res = github.filterAndSortReleases({ releases, ignoreDrafts: true, ignorePrereleases: true })
+      expect(res).toStrictEqual(releases[2])
+    })
+
+    it('should filter out all releases and return undefined', () => {
+      const releases = [
+        { name: 'v1.0.0', draft: true, prerelease: false },
+        { name: 'v1.1.0', draft: false, prerelease: true },
+        { name: 'v1.3.0', draft: true, prerelease: true }
+      ]
+      const res = github.filterAndSortReleases({ releases, ignoreDrafts: true, ignorePrereleases: true })
+      expect(res).toStrictEqual(undefined)
     })
   })
 
