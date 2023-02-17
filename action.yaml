@@ -12,10 +12,10 @@ inputs:
     description: Default version bump (major, minor, or patch)
     default: patch
   ignore-prereleases:
-    description: Ignore prereleases when calculating the next version
+    description: Ignore prereleases when calculating the next version (true or false)
     default: false
   ignore-drafts:
-    description: Ignore draft releases when calculating the next version
+    description: Ignore draft releases when calculating the next version (true or false)
     default: false
   mode:
     description: Sets the version mode to run - future use-case

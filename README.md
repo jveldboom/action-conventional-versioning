@@ -20,11 +20,11 @@ Design Descisions
     # Default: patch
     default-bump: ''
 
-    # Ignore prereleases when calculating the next version
+    # Ignore prereleases when calculating the next version (true or false)
     # Default: false
     ignore-drafts: ''
 
-    # Ignore draft releases when calculating the next version
+    # Ignore draft releases when calculating the next version (true or false)
     # Default: false
     ignore-prereleases: ''
 
