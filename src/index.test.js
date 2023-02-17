@@ -9,7 +9,7 @@ jest.spyOn(core, 'setOutput')
 
 const index = require('./index')
 
-describe.skip('index', () => {
+describe('index', () => {
   beforeEach(() => {
     process.env.GITHUB_REPOSITORY = 'foo/bar'
     process.env['INPUT_GITHUB-TOKEN'] = 'test-token'
@@ -22,14 +22,14 @@ describe.skip('index', () => {
   })
 
   it('should fail when unable to get latest tag', async () => {
-    github.getLatestTag.mockRejectedValueOnce(new Error('test error'))
+    github.getLatestRelease.mockRejectedValueOnce(new Error('test error'))
 
     await index.run()
     expect(core.setFailed).toBeCalledTimes(1)
   })
 
   it('should output default version bump (0.0.1) if no previous tags', async () => {
-    github.getLatestTag.mockResolvedValueOnce()
+    github.getLatestRelease.mockResolvedValueOnce()
 
     await index.run()
     expect(core.getInput).toHaveBeenNthCalledWith(2, 'default-bump')
@@ -44,7 +44,7 @@ describe.skip('index', () => {
   })
 
   it('should fail when latest tag is no valid semver', async () => {
-    github.getLatestTag.mockResolvedValueOnce('invalid-semver')
+    github.getLatestRelease.mockResolvedValueOnce('invalid-semver')
 
     await index.run()
     expect(core.setFailed).toBeCalledTimes(1)
@@ -56,7 +56,7 @@ describe.skip('index', () => {
       name: 'v1.2.3',
       commit: { sha: '123456789' }
     }
-    github.getLatestTag.mockResolvedValueOnce(latestTag)
+    github.getLatestRelease.mockResolvedValueOnce(latestTag)
     github.compareCommits.mockResolvedValueOnce([])
 
     await index.run()
