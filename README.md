@@ -20,11 +20,11 @@ Design Descisions
     # Default: patch
     default-bump: ''
 
-    # Ignore prereleases when calculating the next version
+    # Ignore prereleases when calculating the next version (true or false)
     # Default: false
     ignore-drafts: ''
 
-    # Ignore draft releases when calculating the next version
+    # Ignore draft releases when calculating the next version (true or false)
     # Default: false
     ignore-prereleases: ''
 
@@ -46,7 +46,7 @@ Design Descisions
 
 ## Example Use-Cases
 ### Auto version on any push to the `main` branch
-This example will create a new GitHub release on any push to main as well as update the floating major version `v1`
+This example will create a new GitHub release on any push to the `main` branch as well as update the floating major version (eg `v1`)
 
 ```yaml
 ---
@@ -94,11 +94,14 @@ I'll take all the help I can get so please feel free to contribute in anyway! Sp
 # install dependencies
 yarn install
 
-# unit Tests
+# unit tests
 yarn test:watch
 
 # lint code via standardjs
 yarn lint
+
+# build distribution bundle
+yarn build
 ```
 
 ## TODO
@@ -111,7 +114,8 @@ yarn lint
 - [x] Output version bump (major, minor, patch) No specific use case but I believe it will be useful
 - [ ] Add version suffix that are semver
 - [ ] Improve integration testing to cover all use-case. May require the ability to pass in a list of commits
-
+- [ ] Better error messaging for all GH API calls.
+  - [This call](https://github.com/jveldboom/action-conventional-versioning/blob/main/src/run.js#L36) is currently only caught by outside try/catch
 
 ## Notes
 - Commit Analyzer https://github.com/semantic-release/commit-analyzer#releaserules
