@@ -47,6 +47,7 @@ describe('run', () => {
     expect(core.setOutput).toHaveBeenNthCalledWith(4, 'major-with-prefix', 'v0')
     expect(core.setOutput).toHaveBeenNthCalledWith(5, 'minor', 0)
     expect(core.setOutput).toHaveBeenNthCalledWith(6, 'patch', 1)
+    expect(core.setOutput).toHaveBeenNthCalledWith(7, 'bump', 'patch')
   })
 
   it('should fail when latest tag is no valid semver', async () => {
@@ -73,5 +74,6 @@ describe('run', () => {
     expect(core.setOutput).toHaveBeenNthCalledWith(4, 'major-with-prefix', 'v1')
     expect(core.setOutput).toHaveBeenNthCalledWith(5, 'minor', 2)
     expect(core.setOutput).toHaveBeenNthCalledWith(6, 'patch', 4)
+    expect(core.setOutput).toHaveBeenNthCalledWith(7, 'bump', 'patch')
   })
 })

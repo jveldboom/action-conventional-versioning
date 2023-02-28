@@ -44181,7 +44181,7 @@ module.exports = async () => {
   // return a default version if no previous github tags
   if (!latestRelease) {
     const incrementedVersion = semver.inc('0.0.0', core.getInput('default-bump'))
-    return utils.setVersionOutputs(incrementedVersion)
+    return utils.setVersionOutputs(incrementedVersion, core.getInput('default-bump'))
   }
 
   if (!semver.valid(latestRelease.name)) {
@@ -44193,7 +44193,7 @@ module.exports = async () => {
   const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
 
   const incrementedVersion = semver.inc(latestRelease.name, bump)
-  utils.setVersionOutputs(incrementedVersion)
+  utils.setVersionOutputs(incrementedVersion, bump)
 }
 
 
@@ -44209,8 +44209,9 @@ const commit = __nccwpck_require__(156)
 /**
  * Output version details
  * @param {string} version version number
+ * @param {string} bump version bump name (major, minor, patch)
  */
-const setVersionOutputs = (version) => {
+const setVersionOutputs = (version, bump) => {
   const output = semver.parse(version)
 
   core.setOutput('version', output.version)
@@ -44219,6 +44220,7 @@ const setVersionOutputs = (version) => {
   core.setOutput('major-with-prefix', `v${output.major}`)
   core.setOutput('minor', output.minor)
   core.setOutput('patch', output.patch)
+  core.setOutput('bump', bump)
 }
 
 /**
