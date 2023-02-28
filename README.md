@@ -42,6 +42,7 @@ Design Descisions
 `major-with-prefix` | major version number with `v` prefix (`v1`)
 `minor` | minor version number
 `patch` | patch version number
+`bump` | version bump type (major, minor, or patch)
 
 ## Example Use-Cases
 ### Auto version on any push to the `main` branch
@@ -104,9 +105,15 @@ yarn build
 ```
 
 ## TODO
+- [x] Release v1 of action
+- [x] Workflow to run regresssion tests with compiled action
+- [x] List action in marketplace
+- [x] Improve index.js file
+  - Should it be simplified and wrapped in a try/catch?
+  - How can we get 100% test coverage on it?
+- [x] Output version bump (major, minor, patch) No specific use case but I believe it will be useful
 - [ ] Add version suffix that are semver
 - [ ] Improve integration testing to cover all use-case. May require the ability to pass in a list of commits
-- [ ] Output version bump (major, minor, patch) No specific use case but I believe it will be useful
 - [ ] Better error messaging for all GH API calls.
   - [This call](https://github.com/jveldboom/action-conventional-versioning/blob/main/src/run.js#L36) is currently only caught by outside try/catch
 

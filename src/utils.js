@@ -5,8 +5,9 @@ const commit = require('@semantic-release/commit-analyzer')
 /**
  * Output version details
  * @param {string} version version number
+ * @param {string} bump version bump name (major, minor, patch)
  */
-const setVersionOutputs = (version) => {
+const setVersionOutputs = (version, bump) => {
   const output = semver.parse(version)
 
   core.setOutput('version', output.version)
@@ -15,6 +16,7 @@ const setVersionOutputs = (version) => {
   core.setOutput('major-with-prefix', `v${output.major}`)
   core.setOutput('minor', output.minor)
   core.setOutput('patch', output.patch)
+  core.setOutput('bump', bump)
 }
 
 /**
