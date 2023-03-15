@@ -51,11 +51,11 @@ describe('run', () => {
   })
 
   it('should fail when latest tag is no valid semver', async () => {
-    github.getLatestRelease.mockResolvedValueOnce('invalid-semver')
+    github.getLatestRelease.mockResolvedValueOnce({ name: 'invalid-semver' })
 
     await run()
     expect(core.setFailed).toBeCalledTimes(1)
-    expect(core.setFailed).toHaveBeenNthCalledWith(1, 'latest tag name is not valid semver: "invalid-semver"')
+    expect(core.setFailed).toHaveBeenNthCalledWith(1, 'latest tag name "invalid-semver" is not valid semver. GitHub API response: {"name":"invalid-semver"}')
   })
 
   it('should output versions', async () => {

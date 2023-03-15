@@ -29,7 +29,7 @@ module.exports = async () => {
   }
 
   if (!semver.valid(latestRelease.name)) {
-    return core.setFailed(`latest tag name is not valid semver: ${JSON.stringify(latestRelease)}`)
+    return core.setFailed(`latest tag name "${latestRelease.name}" is not valid semver. GitHub API response: ${JSON.stringify(latestRelease)}`)
   }
 
   // get commits from last tag and calculate version bump
