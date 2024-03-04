@@ -44270,7 +44270,7 @@ module.exports = async () => {
     return core.setFailed(`unable to get latest release - error: ${err.message} ${err?.response?.status}`)
   }
 
-  // return a default version if no previous github tags
+  // return a default version if no previous github releases
   if (!latestRelease) {
     const incrementedVersion = semver.inc('0.0.0', core.getInput('default-bump'))
     return utils.setVersionOutputs(incrementedVersion, core.getInput('default-bump'))
