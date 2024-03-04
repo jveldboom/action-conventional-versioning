@@ -1,5 +1,5 @@
 name: Conventional Versioning
-description: GitHub Action that returns a sematic version based on Conventional Commits
+description: GitHub Action that returns a semantic version based on Conventional Commits
 branding:
   icon: tag
   color: blue
@@ -23,9 +23,9 @@ inputs:
 
 outputs:
   version:
-    description: Sematic version without prefix
+    description: Semantic version without prefix
   version-with-prefix:
-    description: Sematic version with prefix
+    description: Semantic version with prefix
   major:
     description: Major version number
   major-with-prefix:
