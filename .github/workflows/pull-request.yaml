@@ -23,15 +23,10 @@ jobs:
       - name: Unit test
         run: yarn test
 
-      - name: Rebuild the dist/ directory
-        run: yarn build
-
-      - name: Compare the expected and actual dist/ directories
+      - name: Validate Distribution Builds
         run: |
-          if [ "$(git diff --ignore-space-at-eol ./dist/ | wc -l)" -gt "0" ]; then
-            echo "Detected uncommitted changes after build within the ./dist directory"
-            exit 1
-          fi
+          yarn build
+          git diff --exit-code
 
   integration-tests:
     runs-on: ubuntu-latest
