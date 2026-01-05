@@ -33,7 +33,7 @@ module.exports = async () => {
   }
 
   // get commits from last tag and calculate version bump
-  const commits = await github.compareCommits(octokit, owner, repo, latestRelease.target_commitish, sha)
+  const commits = await github.compareCommits(octokit, owner, repo, latestRelease.tag_name, sha)
   const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
 
   const incrementedVersion = semver.inc(latestRelease.name, bump)

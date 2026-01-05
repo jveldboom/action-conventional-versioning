@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
@@ -23,22 +23,17 @@ jobs:
       - name: Unit test
         run: yarn test
 
-      - name: Rebuild the dist/ directory
-        run: yarn build
-
-      - name: Compare the expected and actual dist/ directories
+      - name: Validate Distribution Builds
         run: |
-          if [ "$(git diff --ignore-space-at-eol ./dist/ | wc -l)" -gt "0" ]; then
-            echo "Detected uncommitted changes after build within the ./dist directory"
-            exit 1
-          fi
+          yarn build
+          git diff --exit-code
 
   integration-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
