@@ -1,7 +1,7 @@
 # GitHub Action for Automated Versioning with Conventional Commits
 GitHub Action to automatically generate version numbers based on [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
 
-Design Descisions
+Design Decisions
 - Easily generate automatic version numbers based on [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) spec.
 - Should work with any language or repository structure
 - Should be used a building block and not try to manage the whole versioning process. (although may handle optional tagging in the future with the `mode` input)
@@ -48,7 +48,7 @@ Design Descisions
 
 ## Example Use-Cases
 ### Auto version on any push to the `main` branch
-This example will create a new GitHub release on any push to the `main` branch as well as update the floating major version (eg `v1`)
+This example will create a new GitHub release on any push to the `main` branch as well as update the floating major version (eg `v1`).
 
 ```yaml
 ---
@@ -66,7 +66,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: jveldboom/action-conventional-versioning@v1
         id: version
@@ -77,7 +77,7 @@ jobs:
         run: |
           gh release create "${{ steps.version.outputs.version-with-prefix }}" \
             --generate-notes \
-            --target "${{ github.sha }}"
+            --notes-start-tag "${{ steps.version.outputs.previous-version-with-prefix }}"
 
       - name: Update Major Tag
         env:
