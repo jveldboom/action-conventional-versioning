@@ -24,8 +24,10 @@ module.exports = async () => {
 
   // return a default version if no previous github releases
   if (!latestRelease) {
-    const incrementedVersion = semver.inc('0.0.0', core.getInput('default-bump'))
-    return utils.setVersionOutputs(incrementedVersion, core.getInput('default-bump'))
+    const previousVersion = '0.0.0'
+    const bump = core.getInput('default-bump')
+    const version = semver.inc(previousVersion, bump)
+    return utils.setVersionOutputs({ version, bump, previousVersion })
   }
 
   if (!semver.valid(latestRelease.name)) {
@@ -36,6 +38,7 @@ module.exports = async () => {
   const commits = await github.compareCommits(octokit, owner, repo, latestRelease.tag_name, sha)
   const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
 
-  const incrementedVersion = semver.inc(latestRelease.name, bump)
-  utils.setVersionOutputs(incrementedVersion, bump)
+  const previousVersion = latestRelease.name
+  const version = semver.inc(previousVersion, bump)
+  utils.setVersionOutputs({ version, bump, previousVersion })
 }

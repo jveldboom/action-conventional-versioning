@@ -15,14 +15,16 @@ describe('utils', () => {
 
   describe('setVersionOutputs()', () => {
     it('should set output for all values', () => {
-      utils.setVersionOutputs('2.3.4', 'minor')
+      utils.setVersionOutputs({ version: '2.3.4', bump: 'minor', previousVersion: '2.2.4' })
       expect(core.setOutput).toHaveBeenNthCalledWith(1, 'version', '2.3.4')
       expect(core.setOutput).toHaveBeenNthCalledWith(2, 'version-with-prefix', 'v2.3.4')
-      expect(core.setOutput).toHaveBeenNthCalledWith(3, 'major', 2)
-      expect(core.setOutput).toHaveBeenNthCalledWith(4, 'major-with-prefix', 'v2')
-      expect(core.setOutput).toHaveBeenNthCalledWith(5, 'minor', 3)
-      expect(core.setOutput).toHaveBeenNthCalledWith(6, 'patch', 4)
-      expect(core.setOutput).toHaveBeenNthCalledWith(7, 'bump', 'minor')
+      expect(core.setOutput).toHaveBeenNthCalledWith(3, 'previous-version', '2.2.4')
+      expect(core.setOutput).toHaveBeenNthCalledWith(4, 'previous-version-with-prefix', 'v2.2.4')
+      expect(core.setOutput).toHaveBeenNthCalledWith(5, 'major', 2)
+      expect(core.setOutput).toHaveBeenNthCalledWith(6, 'major-with-prefix', 'v2')
+      expect(core.setOutput).toHaveBeenNthCalledWith(7, 'minor', 3)
+      expect(core.setOutput).toHaveBeenNthCalledWith(8, 'patch', 4)
+      expect(core.setOutput).toHaveBeenNthCalledWith(9, 'bump', 'minor')
     })
   })
 
