@@ -26,6 +26,10 @@ outputs:
     description: Semantic version without prefix
   version-with-prefix:
     description: Semantic version with prefix
+  previous-version:
+    description: Previous version used for the bump without prefix
+  previous-version-with-prefix:
+    description: Previous version used for the bump with prefix
   major:
     description: Major version number
   major-with-prefix:

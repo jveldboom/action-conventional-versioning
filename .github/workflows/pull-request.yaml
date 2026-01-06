@@ -56,5 +56,9 @@ jobs:
             assert.deepEqual(outputs.minor, minor)
             assert.deepEqual(outputs.patch, patch)
 
+            // check previous version outputs
+            const [ prevMajor, prevMinor, prevPatch ] = outputs['previous-version'].split('.')
+            assert.deepEqual(outputs['previous-version-with-prefix'], `v${prevMajor}.${prevMinor}.${prevPatch}`)
+
             // check output is a valid bump string
             assert.deepEqual(['major','minor','patch'].indexOf(outputs.bump) > -1, true)
