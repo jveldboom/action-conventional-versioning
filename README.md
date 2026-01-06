@@ -38,6 +38,8 @@ Design Descisions
 |------|-------------|
 `version` | full semantic version number (`1.2.3`)
 `version-with-prefix` | version number with `v` prefix (`v1.2.3`)
+`previous-version` | previous version used for the bump (`1.2.2`)
+`previous-version-with-prefix` | previous version with `v` prefix (`v1.2.2`)
 `major` | major version number
 `major-with-prefix` | major version number with `v` prefix (`v1`)
 `minor` | minor version number
