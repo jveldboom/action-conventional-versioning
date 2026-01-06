@@ -1,7 +1,7 @@
 # GitHub Action for Automated Versioning with Conventional Commits
 GitHub Action to automatically generate version numbers based on [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
 
-Design Descisions
+Design Decisions
 - Easily generate automatic version numbers based on [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) spec.
 - Should work with any language or repository structure
 - Should be used a building block and not try to manage the whole versioning process. (although may handle optional tagging in the future with the `mode` input)
