@@ -77,7 +77,7 @@ jobs:
         run: |
           gh release create "${{ steps.version.outputs.version-with-prefix }}" \
             --generate-notes \
-            --target "${{ steps.version.outputs.previous-version-with-prefix }}"
+            --notes-start-tag "${{ steps.version.outputs.previous-version-with-prefix }}"
 
       - name: Update Major Tag
         env:
