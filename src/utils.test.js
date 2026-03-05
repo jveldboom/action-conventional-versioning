@@ -2,8 +2,6 @@
 const core = require('@actions/core')
 const utils = require('./utils')
 
-jest.spyOn(core, 'setOutput')
-
 describe('utils', () => {
   beforeEach(() => {
 
