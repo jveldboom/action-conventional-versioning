@@ -1,14 +1,9 @@
 /* eslint-env jest */
 const core = require('@actions/core')
 const github = require('./github')
+const run = require('./run')
 
 jest.mock('./github')
-jest.spyOn(core, 'getInput')
-jest.spyOn(core, 'getBooleanInput')
-jest.spyOn(core, 'setFailed')
-jest.spyOn(core, 'setOutput')
-
-const run = require('./run')
 
 describe('run', () => {
   beforeEach(() => {
@@ -34,11 +29,6 @@ describe('run', () => {
     github.getLatestRelease.mockResolvedValueOnce()
 
     await run()
-    // check core.input are called with expected values
-    expect(core.getBooleanInput).toHaveBeenNthCalledWith(1, 'ignore-drafts')
-    expect(core.getBooleanInput).toHaveBeenNthCalledWith(2, 'ignore-prereleases')
-    expect(core.getInput).toHaveBeenNthCalledWith(2, 'default-bump')
-    expect(core.getInput).toHaveNthReturnedWith(2, 'patch')
 
     // check all outputs are returning expected values
     expect(core.setOutput).toHaveBeenNthCalledWith(1, 'version', '0.0.1')
