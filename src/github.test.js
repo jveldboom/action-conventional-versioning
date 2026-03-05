@@ -128,27 +128,4 @@ describe('github', () => {
       }])
     })
   })
-
-  describe('createRelease', () => {
-    let result
-
-    beforeEach(async () => {
-      mockOctokit.request.mockImplementation(() => 'success')
-
-      result = await github.createRelease(mockOctokit, 'owner', 'repo', '1.0.0')
-    })
-
-    it('creates a release via the GitHub API', () => {
-      expect(mockOctokit.request).toHaveBeenCalledWith('POST /repos/{owner}/{repo}/releases', {
-        owner: 'owner',
-        repo: 'repo',
-        tag_name: '1.0.0',
-        generate_release_notes: true
-      })
-    })
-
-    it('returns the result of the underlying octokit GitHub API request', () => {
-      expect(result).toBe('success')
-    })
-  })
 })

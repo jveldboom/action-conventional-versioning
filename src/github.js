@@ -40,19 +40,9 @@ const compareCommits = async (octokit, owner, repo, base, head) => {
   })
 }
 
-const createRelease = async (octokit, owner, repo, tag) => {
-  return await octokit.request('POST /repos/{owner}/{repo}/releases', {
-    owner,
-    repo,
-    tag_name: tag,
-    generate_release_notes: true
-  })
-}
-
 module.exports = {
   getOctokit,
   getLatestRelease,
   filterAndSortReleases,
-  compareCommits,
-  createRelease
+  compareCommits
 }
