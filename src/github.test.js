@@ -42,6 +42,24 @@ describe('github', () => {
       const rel = await github.getLatestRelease({ octokit: mockOctokit, owner: 'owner', repo: 'repo' })
       expect(rel).toStrictEqual({ name: 'v1.0' })
     })
+
+    it('rethrows API errors with endpoint context and status', async () => {
+      const apiErr = new Error('Not Found')
+      apiErr.status = 404
+      mockOctokit.request.mockImplementation(() => { throw apiErr })
+
+      await expect(
+        github.getLatestRelease({ octokit: mockOctokit, owner: 'owner', repo: 'repo' })
+      ).rejects.toThrow('failed to list releases for owner/repo [404]: Not Found')
+    })
+
+    it('rethrows API errors without status when unavailable', async () => {
+      mockOctokit.request.mockImplementation(() => { throw new Error('network down') })
+
+      await expect(
+        github.getLatestRelease({ octokit: mockOctokit, owner: 'owner', repo: 'repo' })
+      ).rejects.toThrow('failed to list releases for owner/repo: network down')
+    })
   })
 
   describe('filterAndSortReleases()', () => {
@@ -126,6 +144,16 @@ describe('github', () => {
         message: 'commit-message',
         sha: 'commit-sha'
       }])
+    })
+
+    it('rethrows API errors with endpoint context and status', async () => {
+      const apiErr = new Error('Not Found')
+      apiErr.response = { status: 404 }
+      mockOctokit.request.mockImplementation(() => { throw apiErr })
+
+      await expect(
+        github.compareCommits(mockOctokit, 'owner', 'repo', 'v1.0.0', 'abc123')
+      ).rejects.toThrow('failed to compare v1.0.0...abc123 for owner/repo [404]: Not Found')
     })
   })
 })
