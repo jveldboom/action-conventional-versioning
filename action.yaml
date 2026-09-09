@@ -30,10 +30,6 @@ inputs:
   exclude-unscoped-commits:
     description: Ignore conventional commits that have no scope (true or false)
     default: false
-  mode:
-    description: Sets the version mode to run - future use-case
-    default: default
-
 outputs:
   version:
     description: Semantic version without prefix
