@@ -25,8 +25,8 @@ module.exports = async () => {
     return utils.setVersionOutputs({ version, bump, previousVersion })
   }
 
-  if (!semver.valid(latestRelease.name)) {
-    return core.setFailed(`latest tag name "${latestRelease.name}" is not valid semver. GitHub API response: ${JSON.stringify(latestRelease)}`)
+  if (!semver.valid(latestRelease.tag_name)) {
+    return core.setFailed(`latest tag name "${latestRelease.tag_name}" is not valid semver. GitHub API response: ${JSON.stringify(latestRelease)}`)
   }
 
   // get commits from last tag and calculate version bump
@@ -37,7 +37,7 @@ module.exports = async () => {
     excludeUnscoped: core.getBooleanInput('exclude-unscoped-commits')
   })
 
-  const previousVersion = latestRelease.name
+  const previousVersion = latestRelease.tag_name
   const version = semver.inc(previousVersion, bump)
   utils.setVersionOutputs({ version, bump, previousVersion })
 }
