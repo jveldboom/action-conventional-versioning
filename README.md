@@ -28,9 +28,43 @@ GitHub Action to automatically generate version numbers based on [conventional c
     # Default: false
     ignore-prereleases: ''
 
+    # Newline-separated list of commit scopes to include. When set, only commits
+    # with a matching scope influence the version bump.
+    # Default: ''
+    include-scopes: ''
+
+    # Newline-separated list of commit scopes to exclude. Commits with a matching
+    # scope are ignored (useful for suppressing noisy scopes like `deps`).
+    # Default: ''
+    exclude-scopes: ''
+
+    # Ignore conventional commits that have no scope (true or false)
+    # Default: false
+    exclude-unscoped-commits: ''
+
     # Set the versioning mode to run (future use-case)
     # Default: default
     mode: ''
+```
+
+### Filtering by commit scope
+Restrict which commits influence the version bump using conventional-commit scopes.
+
+```yaml
+- uses: jveldboom/action-conventional-versioning@v1
+  with:
+    # Only commits scoped to `api` or `core` count toward the bump.
+    # Omit to consider every commit.
+    include-scopes: |
+      api
+      core
+
+    # Drop commits with these scopes (e.g. Dependabot noise).
+    # Applied after include-scopes, so you can allow a broad set and still
+    # remove specific scopes from within it.
+    exclude-scopes: |
+      deps
+      docs
 ```
 
 ## Outputs
@@ -90,7 +124,7 @@ jobs:
 ```
 
 ## Contribute
-I'll take all the help I can get so please feel free to contribute in anyway! Spelling & grammar errors, improve testing. Please check out the TODO list below for known items I'd like to resolve.
+I'll take all the help I can get so please feel free to contribute in anyway! Spelling & grammar errors, improve testing.
 
 ```shell
 # install dependencies

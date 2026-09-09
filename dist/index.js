@@ -91743,7 +91743,11 @@ module.exports = async () => {
 
   // get commits from last tag and calculate version bump
   const commits = await github.compareCommits(octokit, owner, repo, latestRelease.tag_name, sha)
-  const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
+  const bump = await utils.getVersionBump(commits, core.getInput('default-bump'), {
+    includeScopes: core.getMultilineInput('include-scopes'),
+    excludeScopes: core.getMultilineInput('exclude-scopes'),
+    excludeUnscoped: core.getBooleanInput('exclude-unscoped-commits')
+  })
 
   const previousVersion = latestRelease.name
   const version = semver.inc(previousVersion, bump)
@@ -91800,13 +91804,47 @@ const parserOpts = {
 }
 
 /**
+ * Filter commits by their conventional-commit scope.
+ * @param {Array.<object>} commits [{ message, sha }]
+ * @param {object} [options]
+ * @param {Array.<string>} [options.includeScopes] only keep commits whose scope is in this list
+ * @param {Array.<string>} [options.excludeScopes] drop commits whose scope is in this list
+ * @param {boolean} [options.excludeUnscoped] drop commits with no scope
+ * @returns {Array.<object>} filtered commits
+ */
+const filterCommitsByScope = (commits = [], { includeScopes = [], excludeScopes = [], excludeUnscoped = false } = {}) => {
+  const hasInclude = includeScopes.length > 0
+  const hasExclude = excludeScopes.length > 0
+  if (!hasInclude && !hasExclude && !excludeUnscoped) return commits
+
+  return commits.filter(({ message }) => {
+    const header = (message || '').split('\n', 1)[0]
+    const match = header.match(parserOpts.headerPattern)
+    if (!match) {
+      // Non-conventional headers cannot be verified against an include
+      // allowlist, so drop them when one is active. Otherwise let commit-
+      // analyzer decide (e.g. reverts, BREAKING CHANGE footers).
+      return !hasInclude
+    }
+    const scope = match[2]
+
+    if (excludeUnscoped && !scope) return false
+    if (hasInclude && !includeScopes.includes(scope)) return false
+    if (hasExclude && excludeScopes.includes(scope)) return false
+    return true
+  })
+}
+
+/**
  * Get version bump/increment type based on commit messages
  * @param {Array.<object>} commits [{ message, sha }]
  * @param {string} defaultBump bump type (major, minor, patch)
+ * @param {object} [filterOpts] options passed to filterCommitsByScope
  * @returns
  */
-const getVersionBump = async (commits = [], defaultBump = 'patch') => {
-  let bump = await commit.analyzeCommits({ parserOpts }, { commits, logger: { log: () => undefined } })
+const getVersionBump = async (commits = [], defaultBump = 'patch', filterOpts = {}) => {
+  const filtered = filterCommitsByScope(commits, filterOpts)
+  let bump = await commit.analyzeCommits({ parserOpts }, { commits: filtered, logger: { log: () => undefined } })
   if (!bump) bump = defaultBump
 
   return bump
@@ -91815,6 +91853,7 @@ const getVersionBump = async (commits = [], defaultBump = 'patch') => {
 module.exports = {
   setVersionOutputs,
   parserOpts,
+  filterCommitsByScope,
   getVersionBump
 }
 

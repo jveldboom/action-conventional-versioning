@@ -80,5 +80,71 @@ describe('utils', () => {
       const bump = await utils.getVersionBump(commits)
       expect(bump).toBe('major')
     })
+
+    it('should drop excluded scopes before computing the bump', async () => {
+      const commits = [
+        { message: 'feat(api): add endpoint', sha: '111' },
+        { message: 'chore(deps)!: bump lodash', sha: '222' }
+      ]
+      const bump = await utils.getVersionBump(commits, 'patch', { excludeScopes: ['deps'] })
+      expect(bump).toBe('minor')
+    })
+
+    it('should limit consideration to included scopes', async () => {
+      const commits = [
+        { message: 'feat(api): add endpoint', sha: '111' },
+        { message: 'feat(docs)!: overhaul site', sha: '222' }
+      ]
+      const bump = await utils.getVersionBump(commits, 'patch', { includeScopes: ['api'] })
+      expect(bump).toBe('minor')
+    })
+  })
+
+  describe('filterCommitsByScope()', () => {
+    const commits = [
+      { message: 'feat(api): add endpoint', sha: '1' },
+      { message: 'chore(deps): bump lodash', sha: '2' },
+      { message: 'fix: root-level fix', sha: '3' },
+      { message: 'not conventional at all', sha: '4' }
+    ]
+
+    it('returns input unchanged when no filters given', () => {
+      expect(utils.filterCommitsByScope(commits)).toEqual(commits)
+      expect(utils.filterCommitsByScope(commits, {})).toEqual(commits)
+    })
+
+    it('keeps only commits with an included scope and drops non-conventional messages', () => {
+      const result = utils.filterCommitsByScope(commits, { includeScopes: ['api'] })
+      expect(result.map(c => c.sha)).toEqual(['1'])
+    })
+
+    it('drops commits with an excluded scope', () => {
+      const result = utils.filterCommitsByScope(commits, { excludeScopes: ['deps'] })
+      expect(result.map(c => c.sha)).toEqual(['1', '3', '4'])
+    })
+
+    it('drops unscoped conventional commits when excludeUnscoped is true, keeping non-conventional ones', () => {
+      const result = utils.filterCommitsByScope(commits, { excludeUnscoped: true })
+      expect(result.map(c => c.sha)).toEqual(['1', '2', '4'])
+    })
+
+    it('passes non-conventional messages through exclusion-only filters', () => {
+      const nonConventional = [{ message: 'revert something\n\nThis reverts commit abc.', sha: 'x' }]
+      expect(utils.filterCommitsByScope(nonConventional, { excludeUnscoped: true })).toEqual(nonConventional)
+      expect(utils.filterCommitsByScope(nonConventional, { excludeScopes: ['deps'] })).toEqual(nonConventional)
+    })
+
+    it('drops non-conventional messages when an include filter is active', () => {
+      const nonConventional = [{ message: 'Update docs\n\nBREAKING CHANGE: gone', sha: 'x' }]
+      expect(utils.filterCommitsByScope(nonConventional, { includeScopes: ['api'] })).toEqual([])
+    })
+
+    it('applies include and exclude together', () => {
+      const result = utils.filterCommitsByScope(commits, {
+        includeScopes: ['api', 'deps'],
+        excludeScopes: ['deps']
+      })
+      expect(result.map(c => c.sha)).toEqual(['1'])
+    })
   })
 })

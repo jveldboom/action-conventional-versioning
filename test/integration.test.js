@@ -13,6 +13,9 @@ describe('Integration Tests', () => {
     process.env['INPUT_DEFAULT-BUMP'] = 'patch'
     process.env['INPUT_IGNORE-DRAFTS'] = 'false'
     process.env['INPUT_IGNORE-PRERELEASES'] = 'false'
+    process.env['INPUT_INCLUDE-SCOPES'] = ''
+    process.env['INPUT_EXCLUDE-SCOPES'] = ''
+    process.env['INPUT_EXCLUDE-UNSCOPED-COMMITS'] = 'false'
   })
 
   afterEach(() => {
@@ -367,6 +370,94 @@ describe('Integration Tests', () => {
       expect(core.setOutput).toHaveBeenCalledWith('major-with-prefix', 'v6')
       expect(core.setOutput).toHaveBeenCalledWith('minor', 0)
       expect(core.setOutput).toHaveBeenCalledWith('patch', 0)
+    })
+  })
+
+  describe('Scope Filtering', () => {
+    test('include-scopes limits which commits count toward the bump', async () => {
+      process.env['INPUT_INCLUDE-SCOPES'] = 'api'
+      github.getLatestRelease.mockResolvedValueOnce({
+        name: '1.0.0',
+        tag_name: 'v1.0.0'
+      })
+      github.compareCommits.mockResolvedValueOnce([
+        { message: 'feat(api): add endpoint', sha: 'a' },
+        { message: 'feat(docs)!: overhaul site', sha: 'b' }
+      ])
+
+      await run()
+
+      expect(core.setOutput).toHaveBeenCalledWith('version', '1.1.0')
+      expect(core.setOutput).toHaveBeenCalledWith('bump', 'minor')
+    })
+
+    test('exclude-scopes drops noisy scopes before computing the bump', async () => {
+      process.env['INPUT_EXCLUDE-SCOPES'] = 'deps'
+      github.getLatestRelease.mockResolvedValueOnce({
+        name: '1.2.3',
+        tag_name: 'v1.2.3'
+      })
+      github.compareCommits.mockResolvedValueOnce([
+        { message: 'feat(api): add endpoint', sha: 'a' },
+        { message: 'chore(deps)!: bump lodash', sha: 'b' }
+      ])
+
+      await run()
+
+      expect(core.setOutput).toHaveBeenCalledWith('version', '1.3.0')
+      expect(core.setOutput).toHaveBeenCalledWith('bump', 'minor')
+    })
+
+    test('exclude-unscoped-commits drops commits with no scope', async () => {
+      process.env['INPUT_EXCLUDE-UNSCOPED-COMMITS'] = 'true'
+      github.getLatestRelease.mockResolvedValueOnce({
+        name: '1.0.0',
+        tag_name: 'v1.0.0'
+      })
+      github.compareCommits.mockResolvedValueOnce([
+        { message: 'feat: unscoped feature', sha: 'a' },
+        { message: 'fix(api): scoped fix', sha: 'b' }
+      ])
+
+      await run()
+
+      expect(core.setOutput).toHaveBeenCalledWith('version', '1.0.1')
+      expect(core.setOutput).toHaveBeenCalledWith('bump', 'patch')
+    })
+
+    test('multiline scopes are parsed as a list', async () => {
+      process.env['INPUT_EXCLUDE-SCOPES'] = 'deps\ndocs'
+      github.getLatestRelease.mockResolvedValueOnce({
+        name: '2.0.0',
+        tag_name: 'v2.0.0'
+      })
+      github.compareCommits.mockResolvedValueOnce([
+        { message: 'feat(docs): rewrite', sha: 'a' },
+        { message: 'chore(deps)!: bump', sha: 'b' },
+        { message: 'fix(api): patch', sha: 'c' }
+      ])
+
+      await run()
+
+      expect(core.setOutput).toHaveBeenCalledWith('version', '2.0.1')
+      expect(core.setOutput).toHaveBeenCalledWith('bump', 'patch')
+    })
+
+    test('falls back to default-bump when all commits are filtered out', async () => {
+      process.env['INPUT_INCLUDE-SCOPES'] = 'nonexistent'
+      github.getLatestRelease.mockResolvedValueOnce({
+        name: '1.0.0',
+        tag_name: 'v1.0.0'
+      })
+      github.compareCommits.mockResolvedValueOnce([
+        { message: 'feat(api): add endpoint', sha: 'a' },
+        { message: 'feat!: breaking', sha: 'b' }
+      ])
+
+      await run()
+
+      expect(core.setOutput).toHaveBeenCalledWith('version', '1.0.1')
+      expect(core.setOutput).toHaveBeenCalledWith('bump', 'patch')
     })
   })
 

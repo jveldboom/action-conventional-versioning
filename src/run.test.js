@@ -12,6 +12,9 @@ describe('run', () => {
     process.env['INPUT_DEFAULT-BUMP'] = 'patch'
     process.env['INPUT_IGNORE-DRAFTS'] = false
     process.env['INPUT_IGNORE-PRERELEASES'] = false
+    process.env['INPUT_INCLUDE-SCOPES'] = ''
+    process.env['INPUT_EXCLUDE-SCOPES'] = ''
+    process.env['INPUT_EXCLUDE-UNSCOPED-COMMITS'] = false
   })
 
   afterEach(() => {

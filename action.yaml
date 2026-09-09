@@ -17,6 +17,19 @@ inputs:
   ignore-drafts:
     description: Ignore draft releases when calculating the next version (true or false)
     default: false
+  include-scopes:
+    description: |
+      Newline-separated list of commit scopes to include when calculating the next version.
+      When set, only commits with a matching scope are considered.
+    default: ''
+  exclude-scopes:
+    description: |
+      Newline-separated list of commit scopes to exclude when calculating the next version.
+      Commits with a matching scope are ignored.
+    default: ''
+  exclude-unscoped-commits:
+    description: Ignore conventional commits that have no scope (true or false)
+    default: false
   mode:
     description: Sets the version mode to run - future use-case
     default: default

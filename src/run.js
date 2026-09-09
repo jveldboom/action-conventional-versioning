@@ -31,7 +31,11 @@ module.exports = async () => {
 
   // get commits from last tag and calculate version bump
   const commits = await github.compareCommits(octokit, owner, repo, latestRelease.tag_name, sha)
-  const bump = await utils.getVersionBump(commits, core.getInput('default-bump'))
+  const bump = await utils.getVersionBump(commits, core.getInput('default-bump'), {
+    includeScopes: core.getMultilineInput('include-scopes'),
+    excludeScopes: core.getMultilineInput('exclude-scopes'),
+    excludeUnscoped: core.getBooleanInput('exclude-unscoped-commits')
+  })
 
   const previousVersion = latestRelease.name
   const version = semver.inc(previousVersion, bump)
