@@ -5,10 +5,16 @@ const getOctokit = (token) => {
 }
 
 const getLatestRelease = async ({ octokit, owner, repo, ignoreDrafts = false, ignorePrereleases = false }) => {
-  const res = await octokit.request('GET /repos/{owner}/{repo}/releases', {
-    owner,
-    repo
-  })
+  let res
+  try {
+    res = await octokit.request('GET /repos/{owner}/{repo}/releases', {
+      owner,
+      repo
+    })
+  } catch (err) {
+    const status = err.status ?? err.response?.status
+    throw new Error(`failed to list releases for ${owner}/${repo}${status ? ` [${status}]` : ''}: ${err.message}`, { cause: err })
+  }
 
   if (!Array.isArray(res?.data) || res?.data?.length < 1) return
   return filterAndSortReleases({ releases: res.data, ignoreDrafts, ignorePrereleases })
@@ -26,11 +32,17 @@ const filterAndSortReleases = ({ releases = [], ignoreDrafts = false, ignorePrer
 }
 
 const compareCommits = async (octokit, owner, repo, base, head) => {
-  const res = await octokit.request('GET /repos/{owner}/{repo}/compare/{basehead}', {
-    owner,
-    repo,
-    basehead: `${base}...${head}`
-  })
+  let res
+  try {
+    res = await octokit.request('GET /repos/{owner}/{repo}/compare/{basehead}', {
+      owner,
+      repo,
+      basehead: `${base}...${head}`
+    })
+  } catch (err) {
+    const status = err.status ?? err.response?.status
+    throw new Error(`failed to compare ${base}...${head} for ${owner}/${repo}${status ? ` [${status}]` : ''}: ${err.message}`, { cause: err })
+  }
 
   return res.data.commits.map(c => {
     return {
