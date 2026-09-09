@@ -4,7 +4,7 @@ GitHub Action to automatically generate version numbers based on [conventional c
 ## Design Decisions
 - Easily generate automatic version numbers based on [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) spec.
 - Should work with any language or repository structure
-- Should be used a building block and not try to manage the whole versioning process. (although may handle optional tagging in the future with the `mode` input)
+- Should be used as a building block and not try to manage the whole versioning process. (although may handle optional tagging in the future with the `mode` input)
 
 ## Usage
 ```yaml
@@ -124,7 +124,7 @@ jobs:
 ```
 
 ## Contribute
-I'll take all the help I can get so please feel free to contribute in anyway! Spelling & grammar errors, improve testing.
+I'll take all the help I can get so please feel free to contribute in any way! Spelling & grammar errors, improve testing.
 
 ```shell
 # install dependencies
