@@ -113,9 +113,9 @@ describe('utils', () => {
       expect(utils.filterCommitsByScope(commits, {})).toEqual(commits)
     })
 
-    it('keeps only commits with an included scope', () => {
+    it('keeps only commits with an included scope (non-conventional messages pass through)', () => {
       const result = utils.filterCommitsByScope(commits, { includeScopes: ['api'] })
-      expect(result.map(c => c.sha)).toEqual(['1'])
+      expect(result.map(c => c.sha)).toEqual(['1', '4'])
     })
 
     it('drops commits with an excluded scope', () => {
@@ -123,17 +123,16 @@ describe('utils', () => {
       expect(result.map(c => c.sha)).toEqual(['1', '3', '4'])
     })
 
-    it('drops unscoped commits when excludeUnscoped is true', () => {
+    it('drops unscoped conventional commits when excludeUnscoped is true, keeping non-conventional ones', () => {
       const result = utils.filterCommitsByScope(commits, { excludeUnscoped: true })
-      expect(result.map(c => c.sha)).toEqual(['1', '2'])
+      expect(result.map(c => c.sha)).toEqual(['1', '2', '4'])
     })
 
-    it('treats non-conventional messages as unscoped', () => {
-      const result = utils.filterCommitsByScope(
-        [{ message: 'not conventional', sha: 'x' }],
-        { excludeUnscoped: true }
-      )
-      expect(result).toEqual([])
+    it('keeps non-conventional messages regardless of scope filters', () => {
+      const nonConventional = [{ message: 'revert something\n\nThis reverts commit abc.', sha: 'x' }]
+      expect(utils.filterCommitsByScope(nonConventional, { excludeUnscoped: true })).toEqual(nonConventional)
+      expect(utils.filterCommitsByScope(nonConventional, { includeScopes: ['api'] })).toEqual(nonConventional)
+      expect(utils.filterCommitsByScope(nonConventional, { excludeScopes: ['deps'] })).toEqual(nonConventional)
     })
 
     it('applies include and exclude together', () => {
@@ -141,7 +140,7 @@ describe('utils', () => {
         includeScopes: ['api', 'deps'],
         excludeScopes: ['deps']
       })
-      expect(result.map(c => c.sha)).toEqual(['1'])
+      expect(result.map(c => c.sha)).toEqual(['1', '4'])
     })
   })
 })
