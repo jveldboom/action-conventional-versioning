@@ -58,10 +58,12 @@ const filterCommitsByScope = (commits = [], { includeScopes = [], excludeScopes 
   return commits.filter(({ message }) => {
     const header = (message || '').split('\n', 1)[0]
     const match = header.match(parserOpts.headerPattern)
-    // Non-conventional messages fall through: commit-analyzer may still assign
-    // a release (e.g. reverts, BREAKING CHANGE footers), so scope filters do
-    // not apply.
-    if (!match) return true
+    if (!match) {
+      // Non-conventional headers cannot be verified against an include
+      // allowlist, so drop them when one is active. Otherwise let commit-
+      // analyzer decide (e.g. reverts, BREAKING CHANGE footers).
+      return !hasInclude
+    }
     const scope = match[2]
 
     if (excludeUnscoped && !scope) return false

@@ -113,9 +113,9 @@ describe('utils', () => {
       expect(utils.filterCommitsByScope(commits, {})).toEqual(commits)
     })
 
-    it('keeps only commits with an included scope (non-conventional messages pass through)', () => {
+    it('keeps only commits with an included scope and drops non-conventional messages', () => {
       const result = utils.filterCommitsByScope(commits, { includeScopes: ['api'] })
-      expect(result.map(c => c.sha)).toEqual(['1', '4'])
+      expect(result.map(c => c.sha)).toEqual(['1'])
     })
 
     it('drops commits with an excluded scope', () => {
@@ -128,11 +128,15 @@ describe('utils', () => {
       expect(result.map(c => c.sha)).toEqual(['1', '2', '4'])
     })
 
-    it('keeps non-conventional messages regardless of scope filters', () => {
+    it('passes non-conventional messages through exclusion-only filters', () => {
       const nonConventional = [{ message: 'revert something\n\nThis reverts commit abc.', sha: 'x' }]
       expect(utils.filterCommitsByScope(nonConventional, { excludeUnscoped: true })).toEqual(nonConventional)
-      expect(utils.filterCommitsByScope(nonConventional, { includeScopes: ['api'] })).toEqual(nonConventional)
       expect(utils.filterCommitsByScope(nonConventional, { excludeScopes: ['deps'] })).toEqual(nonConventional)
+    })
+
+    it('drops non-conventional messages when an include filter is active', () => {
+      const nonConventional = [{ message: 'Update docs\n\nBREAKING CHANGE: gone', sha: 'x' }]
+      expect(utils.filterCommitsByScope(nonConventional, { includeScopes: ['api'] })).toEqual([])
     })
 
     it('applies include and exclude together', () => {
@@ -140,7 +144,7 @@ describe('utils', () => {
         includeScopes: ['api', 'deps'],
         excludeScopes: ['deps']
       })
-      expect(result.map(c => c.sha)).toEqual(['1', '4'])
+      expect(result.map(c => c.sha)).toEqual(['1'])
     })
   })
 })
