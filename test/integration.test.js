@@ -200,7 +200,7 @@ describe('Integration Tests', () => {
   })
 
   describe('Error Handling', () => {
-    test('propagates errors from getLatestRelease to the index.js catch', async () => {
+    test('propagates errors from getLatestRelease to the caller', async () => {
       const error = new Error('API Error')
       error.response = { status: 404 }
       github.getLatestRelease.mockRejectedValueOnce(error)
