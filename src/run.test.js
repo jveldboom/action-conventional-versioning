@@ -18,11 +18,11 @@ describe('run', () => {
     jest.clearAllMocks()
   })
 
-  it('should fail when unable to get latest tag', async () => {
+  it('should propagate errors from getLatestRelease', async () => {
     github.getLatestRelease.mockRejectedValueOnce(new Error('test error'))
 
-    await run()
-    expect(core.setFailed).toHaveBeenCalledTimes(1)
+    await expect(run()).rejects.toThrow('test error')
+    expect(core.setFailed).not.toHaveBeenCalled()
   })
 
   it('should output default version bump (0.0.1) if no previous tags', async () => {

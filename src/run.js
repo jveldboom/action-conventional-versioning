@@ -9,18 +9,13 @@ module.exports = async () => {
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
   const sha = process.env.GITHUB_SHA
 
-  let latestRelease
-  try {
-    latestRelease = await github.getLatestRelease({
-      octokit,
-      owner,
-      repo,
-      ignoreDrafts: core.getBooleanInput('ignore-drafts'),
-      ignorePrereleases: core.getBooleanInput('ignore-prereleases')
-    })
-  } catch (err) {
-    return core.setFailed(`unable to get latest release - error: ${err.message} ${err?.response?.status}`)
-  }
+  const latestRelease = await github.getLatestRelease({
+    octokit,
+    owner,
+    repo,
+    ignoreDrafts: core.getBooleanInput('ignore-drafts'),
+    ignorePrereleases: core.getBooleanInput('ignore-prereleases')
+  })
 
   // return a default version if no previous github releases
   if (!latestRelease) {
