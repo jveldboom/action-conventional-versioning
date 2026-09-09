@@ -200,16 +200,13 @@ describe('Integration Tests', () => {
   })
 
   describe('Error Handling', () => {
-    test('fails gracefully when unable to fetch releases', async () => {
+    test('propagates errors from getLatestRelease to the index.js catch', async () => {
       const error = new Error('API Error')
       error.response = { status: 404 }
       github.getLatestRelease.mockRejectedValueOnce(error)
 
-      await run()
-
-      expect(core.setFailed).toHaveBeenCalledWith(
-        'unable to get latest release - error: API Error 404'
-      )
+      await expect(run()).rejects.toThrow('API Error')
+      expect(core.setFailed).not.toHaveBeenCalled()
     })
 
     test('fails when latest release has invalid semver', async () => {
