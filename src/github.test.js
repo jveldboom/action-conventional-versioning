@@ -43,6 +43,25 @@ describe('github', () => {
       expect(rel).toStrictEqual({ name: 'v1.0' })
     })
 
+    it('should pass ignoreDrafts and ignorePrereleases through to filterAndSortReleases', async () => {
+      const releases = [
+        { name: 'draft', draft: true, prerelease: false },
+        { name: 'prerelease', draft: false, prerelease: true },
+        { name: 'stable', draft: false, prerelease: false }
+      ]
+      mockOctokit.request.mockResolvedValueOnce({ data: releases })
+
+      const rel = await github.getLatestRelease({
+        octokit: mockOctokit,
+        owner: 'owner',
+        repo: 'repo',
+        ignoreDrafts: true,
+        ignorePrereleases: true
+      })
+
+      expect(rel).toStrictEqual(releases[2])
+    })
+
     it('rethrows API errors with endpoint context and status', async () => {
       const apiErr = new Error('Not Found')
       apiErr.status = 404

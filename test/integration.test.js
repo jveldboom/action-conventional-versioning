@@ -5,8 +5,11 @@ const run = require('../src/run')
 
 jest.mock('../src/github')
 
+const mockOctokit = { request: jest.fn() }
+
 describe('Integration Tests', () => {
   beforeEach(() => {
+    github.getOctokit.mockReturnValue(mockOctokit)
     process.env.GITHUB_REPOSITORY = 'test-owner/test-repo'
     process.env.GITHUB_SHA = 'abc123def456'
     process.env['INPUT_GITHUB-TOKEN'] = 'test-token'
@@ -239,6 +242,28 @@ describe('Integration Tests', () => {
       expect(core.setOutput).toHaveBeenCalledWith('version', '1.2.4')
       expect(core.setOutput).toHaveBeenCalledWith('previous-version', '1.2.3')
     })
+
+    test('uses tag_name when the release display name is not semver', async () => {
+      github.getLatestRelease.mockResolvedValueOnce({
+        name: 'My cool release',
+        tag_name: 'v1.2.3'
+      })
+      github.compareCommits.mockResolvedValueOnce([
+        { message: 'fix: bug', sha: 'abc123' }
+      ])
+
+      await run()
+
+      expect(core.setFailed).not.toHaveBeenCalled()
+      expect(core.setOutput).toHaveBeenCalledWith('version', '1.2.4')
+      expect(github.compareCommits).toHaveBeenCalledWith(
+        mockOctokit,
+        'test-owner',
+        'test-repo',
+        'v1.2.3',
+        'abc123def456'
+      )
+    })
   })
 
   describe('Draft and Prerelease Handling', () => {
@@ -371,6 +396,24 @@ describe('Integration Tests', () => {
       expect(core.setOutput).toHaveBeenCalledWith('minor', 0)
       expect(core.setOutput).toHaveBeenCalledWith('patch', 0)
     })
+
+    test('adds a v prefix to previous-version-with-prefix for a bare tag', async () => {
+      github.getLatestRelease.mockResolvedValueOnce({
+        tag_name: '1.2.3'
+      })
+      github.compareCommits.mockResolvedValueOnce([
+        { message: 'fix: bug', sha: 'abc123' }
+      ])
+
+      await run()
+
+      // the bare tag must reach the compare API verbatim, not v-prefixed
+      expect(github.compareCommits).toHaveBeenCalledWith(
+        mockOctokit, 'test-owner', 'test-repo', '1.2.3', 'abc123def456'
+      )
+      expect(core.setOutput).toHaveBeenCalledWith('previous-version', '1.2.3')
+      expect(core.setOutput).toHaveBeenCalledWith('previous-version-with-prefix', 'v1.2.3')
+    })
   })
 
   describe('Scope Filtering', () => {
@@ -426,7 +469,7 @@ describe('Integration Tests', () => {
     })
 
     test('multiline scopes are parsed as a list', async () => {
-      process.env['INPUT_EXCLUDE-SCOPES'] = 'deps\ndocs'
+      process.env['INPUT_EXCLUDE-SCOPES'] = '  deps  \n\n  docs\n'
       github.getLatestRelease.mockResolvedValueOnce({
         name: '2.0.0',
         tag_name: 'v2.0.0'
