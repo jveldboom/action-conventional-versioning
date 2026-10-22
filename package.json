@@ -32,7 +32,7 @@
   "dependencies": {
     "@actions/core": "^2.0.3",
     "@actions/github": "^7.0.0",
-    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/commit-analyzer": "^13.0.1",
     "semver": "^7.5.2"
   },
   "devDependencies": {
