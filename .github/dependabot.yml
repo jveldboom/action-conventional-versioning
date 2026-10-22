@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    ignore:
+      # @actions/github v8+ requires code changes; stay on v7 until migrated
+      - dependency-name: "@actions/github"
+        update-types: ["version-update:semver-major"]
