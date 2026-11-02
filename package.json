@@ -45,5 +45,8 @@
     "ignore": [
       "dist/*"
     ]
+  },
+  "resolutions": {
+    "undici": "^6.29.1"
   }
 }
