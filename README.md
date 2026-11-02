@@ -42,6 +42,11 @@ GitHub Action to automatically generate version numbers based on [conventional c
     # Default: false
     exclude-unscoped-commits: ''
 
+    # Highest major version the action may release (non-negative integer).
+    # A bump that would exceed it is downgraded to minor and a warning is logged.
+    # Default: '' (no limit)
+    max-major-version: ''
+
     # Set the versioning mode to run (future use-case)
     # Default: default
     mode: ''
@@ -66,6 +71,23 @@ Restrict which commits influence the version bump using conventional-commit scop
       deps
       docs
 ```
+
+### Limiting the major version
+Make a major release a deliberate act by setting a ceiling on the major version.
+
+```yaml
+- uses: jveldboom/action-conventional-versioning@v1
+  with:
+    max-major-version: 1
+```
+
+With latest release `1.4.2` and a cap of `1`, a breaking change produces `1.5.0` instead of `2.0.0`. Raise the cap in your workflow to release `2.0.0`.
+
+- The cap also applies to `default-bump: major` and to the first release when no previous release exists (a cap of `0` keeps versions on `0.x`).
+- When a bump is capped, the action logs a warning naming the commit(s) that requested the major bump. It does not fail.
+- The `bump` output reflects the capped value (`minor`).
+- Non-integer or negative values fail the step.
+- If the latest release is already above the cap, the bump is still downgraded to minor on that major line. Releasing from maintenance branches is not supported.
 
 ## Outputs
 | Name | Description |

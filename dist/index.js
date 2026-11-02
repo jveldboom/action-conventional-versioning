@@ -92572,6 +92572,13 @@ const github = __nccwpck_require__(6474)
 const utils = __nccwpck_require__(5804)
 
 module.exports = async () => {
+  let maxMajor
+  try {
+    maxMajor = utils.parseMaxMajorVersion(core.getInput('max-major-version'))
+  } catch (err) {
+    return core.setFailed(err.message)
+  }
+
   const octokit = github.getOctokit(core.getInput('github-token'))
 
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
@@ -92588,7 +92595,7 @@ module.exports = async () => {
   // return a default version if no previous github releases
   if (!latestRelease) {
     const previousVersion = '0.0.0'
-    const bump = core.getInput('default-bump')
+    const bump = utils.applyMajorCap({ previousVersion, bump: core.getInput('default-bump'), maxMajor })
     const version = semver.inc(previousVersion, bump)
     return utils.setVersionOutputs({ version, bump, previousVersion })
   }
@@ -92599,13 +92606,18 @@ module.exports = async () => {
 
   // get commits from last tag and calculate version bump
   const commits = await github.compareCommits(octokit, owner, repo, latestRelease.tag_name, sha)
-  const bump = await utils.getVersionBump(commits, core.getInput('default-bump'), {
+  const filterOpts = {
     includeScopes: core.getMultilineInput('include-scopes'),
     excludeScopes: core.getMultilineInput('exclude-scopes'),
     excludeUnscoped: core.getBooleanInput('exclude-unscoped-commits')
-  })
+  }
+  const requestedBump = await utils.getVersionBump(commits, core.getInput('default-bump'), filterOpts)
 
   const previousVersion = latestRelease.name
+  const offenders = requestedBump === 'major' && maxMajor !== null
+    ? await utils.getMajorCommits(commits, filterOpts)
+    : []
+  const bump = utils.applyMajorCap({ previousVersion, bump: requestedBump, maxMajor, offenders })
   const version = semver.inc(previousVersion, bump)
   utils.setVersionOutputs({ version, bump, previousVersion })
 }
@@ -92706,7 +92718,68 @@ const getVersionBump = async (commits = [], defaultBump = 'patch', filterOpts = 
   return bump
 }
 
+/**
+ * Get the commits (after scope filtering) that request a major bump.
+ * Commits cancelled by a later revert are excluded, matching the revert
+ * filtering analyzeCommits applies to the full list.
+ * @param {Array.<object>} commits [{ message, sha }]
+ * @param {object} [filterOpts] options passed to filterCommitsByScope
+ * @returns {Promise<Array.<object>>} commits that remain major after revert filtering
+ */
+const getMajorCommits = async (commits = [], filterOpts = {}) => {
+  const filtered = filterCommitsByScope(commits, filterOpts)
+  const analyze = (list) => commit.analyzeCommits({ parserOpts }, { commits: list, logger: { log: () => undefined } })
+
+  const alone = await Promise.all(filtered.map(async c => (await analyze([c])) === 'major'))
+  const majors = filtered.filter((c, i) => alone[i])
+  const others = filtered.filter((c, i) => !alone[i])
+
+  // A major commit survives only if it is still major when analyzed alongside
+  // the non-major commits (which include any reverts that could cancel it).
+  const survivors = await Promise.all(majors.map(async c => (await analyze([...others, c])) === 'major'))
+  return majors.filter((c, i) => survivors[i])
+}
+
+/**
+ * Parse and validate the max-major-version input
+ * @param {string} raw raw input value
+ * @returns {number|null} the cap, or null when unset
+ */
+const parseMaxMajorVersion = (raw) => {
+  const value = (raw || '').trim()
+  if (value === '') return null
+  if (!/^\d+$/.test(value)) {
+    throw new Error(`max-major-version must be a non-negative integer, got "${raw}"`)
+  }
+  return parseInt(value, 10)
+}
+
+/**
+ * Downgrade a major bump to minor when it would exceed the max major version.
+ * Only warns; never fails.
+ * @param {object} options
+ * @param {string} options.previousVersion version the bump is applied to
+ * @param {string} options.bump requested bump (major, minor, patch)
+ * @param {number|null} options.maxMajor cap from parseMaxMajorVersion
+ * @param {Array.<object>} [options.offenders] commits that requested the major bump
+ * @returns {string} the bump to apply
+ */
+const applyMajorCap = ({ previousVersion, bump, maxMajor, offenders = [] }) => {
+  if (maxMajor === null || maxMajor === undefined || bump !== 'major') return bump
+  const nextMajor = semver.parse(semver.inc(previousVersion, 'major')).major
+  if (nextMajor <= maxMajor) return bump
+
+  const source = offenders.length > 0
+    ? `requested by commit(s): ${offenders.map(c => (c.sha || '').slice(0, 7) || 'unknown').join(', ')}`
+    : 'requested by default-bump'
+  core.warning(`Major bump (${previousVersion} -> ${nextMajor}.0.0) exceeds max-major-version ${maxMajor}; downgrading to minor. Major bump ${source}`)
+  return 'minor'
+}
+
 module.exports = {
+  getMajorCommits,
+  parseMaxMajorVersion,
+  applyMajorCap,
   setVersionOutputs,
   parserOpts,
   filterCommitsByScope,
