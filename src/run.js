@@ -4,6 +4,13 @@ const github = require('./github')
 const utils = require('./utils')
 
 module.exports = async () => {
+  let maxMajor
+  try {
+    maxMajor = utils.parseMaxMajorVersion(core.getInput('max-major-version'))
+  } catch (err) {
+    return core.setFailed(err.message)
+  }
+
   const octokit = github.getOctokit(core.getInput('github-token'))
 
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
@@ -20,7 +27,7 @@ module.exports = async () => {
   // return a default version if no previous github releases
   if (!latestRelease) {
     const previousVersion = '0.0.0'
-    const bump = core.getInput('default-bump')
+    const bump = utils.applyMajorCap({ previousVersion, bump: core.getInput('default-bump'), maxMajor })
     const version = semver.inc(previousVersion, bump)
     return utils.setVersionOutputs({ version, bump, previousVersion })
   }
@@ -31,13 +38,19 @@ module.exports = async () => {
 
   // get commits from last tag and calculate version bump
   const commits = await github.compareCommits(octokit, owner, repo, latestRelease.tag_name, sha)
-  const bump = await utils.getVersionBump(commits, core.getInput('default-bump'), {
+  const filterOpts = {
     includeScopes: core.getMultilineInput('include-scopes'),
     excludeScopes: core.getMultilineInput('exclude-scopes'),
     excludeUnscoped: core.getBooleanInput('exclude-unscoped-commits')
-  })
+  }
+  const requestedBump = await utils.getVersionBump(commits, core.getInput('default-bump'), filterOpts)
 
   const previousVersion = latestRelease.tag_name
+  // only look up the offending commits when the cap will actually downgrade the bump
+  const offenders = utils.exceedsMajorCap({ previousVersion, bump: requestedBump, maxMajor })
+    ? await utils.getMajorCommits(commits, filterOpts)
+    : []
+  const bump = utils.applyMajorCap({ previousVersion, bump: requestedBump, maxMajor, offenders })
   const version = semver.inc(previousVersion, bump)
   utils.setVersionOutputs({ version, bump, previousVersion })
 }

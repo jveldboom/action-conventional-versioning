@@ -30,6 +30,12 @@ inputs:
   exclude-unscoped-commits:
     description: Ignore conventional commits that have no scope (true or false)
     default: false
+  max-major-version:
+    description: |
+      Highest major version the action may release (non-negative integer).
+      When a bump would produce a higher major version, it is downgraded to minor and a warning is logged.
+      Empty means no limit.
+    default: ''
 outputs:
   version:
     description: Semantic version without prefix
@@ -47,6 +53,8 @@ outputs:
     description: Minor version number
   patch:
     description: Patch version number
+  bump:
+    description: Version bump applied (major, minor, or patch), after any max-major-version cap
 
 runs:
   using: "node24"
