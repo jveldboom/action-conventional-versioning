@@ -204,6 +204,25 @@ describe('utils', () => {
     })
   })
 
+  describe('exceedsMajorCap()', () => {
+    it('should be true only for a major bump above the cap', () => {
+      expect(utils.exceedsMajorCap({ previousVersion: '1.4.2', bump: 'major', maxMajor: 1 })).toBe(true)
+      expect(utils.exceedsMajorCap({ previousVersion: '0.0.0', bump: 'major', maxMajor: 0 })).toBe(true)
+      expect(utils.exceedsMajorCap({ previousVersion: '3.1.0', bump: 'major', maxMajor: 1 })).toBe(true)
+    })
+
+    it('should be false when the cap allows the bump', () => {
+      expect(utils.exceedsMajorCap({ previousVersion: '1.4.2', bump: 'major', maxMajor: 2 })).toBe(false)
+    })
+
+    it('should be false for minor/patch bumps or no cap', () => {
+      expect(utils.exceedsMajorCap({ previousVersion: '1.4.2', bump: 'minor', maxMajor: 0 })).toBe(false)
+      expect(utils.exceedsMajorCap({ previousVersion: '1.4.2', bump: 'patch', maxMajor: 0 })).toBe(false)
+      expect(utils.exceedsMajorCap({ previousVersion: '1.4.2', bump: 'major', maxMajor: null })).toBe(false)
+      expect(utils.exceedsMajorCap({ previousVersion: '1.4.2', bump: 'major' })).toBe(false)
+    })
+  })
+
   describe('applyMajorCap()', () => {
     let warning
 

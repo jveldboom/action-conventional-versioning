@@ -101,12 +101,22 @@ describe('run', () => {
       process.env['INPUT_MAX-MAJOR-VERSION'] = '2'
       github.getLatestRelease.mockResolvedValueOnce({ tag_name: 'v1.4.2', commit: { sha: '123' } })
       github.compareCommits.mockResolvedValueOnce(breaking)
+      const utils = require('./utils')
+      const getMajorCommits = jest.spyOn(utils, 'getMajorCommits')
+      let majorCommitsCalls
 
-      await run()
+      try {
+        await run()
+        majorCommitsCalls = getMajorCommits.mock.calls.length
+      } finally {
+        getMajorCommits.mockRestore()
+      }
 
       expect(core.setOutput).toHaveBeenCalledWith('version', '2.0.0')
       expect(core.setOutput).toHaveBeenCalledWith('bump', 'major')
       expect(warning).not.toHaveBeenCalled()
+      // offenders are only looked up when the cap actually downgrades the bump
+      expect(majorCommitsCalls).toBe(0)
     })
 
     it('should cap default-bump major when analyzing commits', async () => {

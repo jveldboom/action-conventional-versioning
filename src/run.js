@@ -46,7 +46,8 @@ module.exports = async () => {
   const requestedBump = await utils.getVersionBump(commits, core.getInput('default-bump'), filterOpts)
 
   const previousVersion = latestRelease.tag_name
-  const offenders = requestedBump === 'major' && maxMajor !== null
+  // only look up the offending commits when the cap will actually downgrade the bump
+  const offenders = utils.exceedsMajorCap({ previousVersion, bump: requestedBump, maxMajor })
     ? await utils.getMajorCommits(commits, filterOpts)
     : []
   const bump = utils.applyMajorCap({ previousVersion, bump: requestedBump, maxMajor, offenders })

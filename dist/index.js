@@ -92614,7 +92614,8 @@ module.exports = async () => {
   const requestedBump = await utils.getVersionBump(commits, core.getInput('default-bump'), filterOpts)
 
   const previousVersion = latestRelease.tag_name
-  const offenders = requestedBump === 'major' && maxMajor !== null
+  // only look up the offending commits when the cap will actually downgrade the bump
+  const offenders = utils.exceedsMajorCap({ previousVersion, bump: requestedBump, maxMajor })
     ? await utils.getMajorCommits(commits, filterOpts)
     : []
   const bump = utils.applyMajorCap({ previousVersion, bump: requestedBump, maxMajor, offenders })
@@ -92755,6 +92756,19 @@ const parseMaxMajorVersion = (raw) => {
 }
 
 /**
+ * Whether applying a bump would exceed the max major version
+ * @param {object} options
+ * @param {string} options.previousVersion version the bump is applied to
+ * @param {string} options.bump requested bump (major, minor, patch)
+ * @param {number|null} options.maxMajor cap from parseMaxMajorVersion
+ * @returns {boolean} true only for a major bump above the cap
+ */
+const exceedsMajorCap = ({ previousVersion, bump, maxMajor }) => {
+  if (maxMajor === null || maxMajor === undefined || bump !== 'major') return false
+  return semver.parse(semver.inc(previousVersion, 'major')).major > maxMajor
+}
+
+/**
  * Downgrade a major bump to minor when it would exceed the max major version.
  * Only warns; never fails.
  * @param {object} options
@@ -92765,9 +92779,8 @@ const parseMaxMajorVersion = (raw) => {
  * @returns {string} the bump to apply
  */
 const applyMajorCap = ({ previousVersion, bump, maxMajor, offenders = [] }) => {
-  if (maxMajor === null || maxMajor === undefined || bump !== 'major') return bump
+  if (!exceedsMajorCap({ previousVersion, bump, maxMajor })) return bump
   const nextMajor = semver.parse(semver.inc(previousVersion, 'major')).major
-  if (nextMajor <= maxMajor) return bump
 
   const source = offenders.length > 0
     ? `requested by commit(s): ${offenders.map(c => (c.sha || '').slice(0, 7) || 'unknown').join(', ')}`
@@ -92777,6 +92790,7 @@ const applyMajorCap = ({ previousVersion, bump, maxMajor, offenders = [] }) => {
 }
 
 module.exports = {
+  exceedsMajorCap,
   getMajorCommits,
   parseMaxMajorVersion,
   applyMajorCap,
