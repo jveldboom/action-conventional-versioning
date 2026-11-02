@@ -1,6 +1,6 @@
-const github = require('@actions/github')
-
-const getOctokit = (token) => {
+// @actions/github v9+ is ESM-only, so it must be loaded with dynamic import()
+const getOctokit = async (token) => {
+  const github = await import(/* webpackMode: "eager" */ '@actions/github')
   return github.getOctokit(token)
 }
 

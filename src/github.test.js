@@ -7,18 +7,18 @@ const mockOctokit = {
 
 jest.spyOn(mockOctokit, 'request')
 
-jest.mock('@actions/github', () => {
+jest.unstable_mockModule('@actions/github', () => {
   return {
     getOctokit: jest.fn(() => mockOctokit)
   }
-})
+}, { virtual: true }) // virtual: @actions/github is ESM-only and not resolvable by jest's CJS resolver
 
 describe('github', () => {
   afterEach(() => { jest.clearAllMocks() })
 
   describe('getOctokit', () => {
-    it('wraps @actions/github\'s getOctokit', () => {
-      expect(github.getOctokit()).toBe(mockOctokit)
+    it('wraps @actions/github\'s getOctokit', async () => {
+      expect(await github.getOctokit('token')).toBe(mockOctokit)
     })
   })
 
