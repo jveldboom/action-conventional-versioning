@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "standard .",
     "build": "ncc build src/index.js -o ./dist --license licenses.txt",
-    "test": "NODE_ENV=test jest --coverage",
-    "test:watch": "NODE_ENV=test jest --coverage --watch"
+    "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "test:watch": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage --watch"
   },
   "repository": {
     "type": "git",
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@actions/core": "^2.0.3",
-    "@actions/github": "^7.0.0",
+    "@actions/github": "9.1.1",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "semver": "^7.5.2"
   },
@@ -45,8 +45,5 @@
     "ignore": [
       "dist/*"
     ]
-  },
-  "resolutions": {
-    "undici": "^6.29.1"
   }
 }

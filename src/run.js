@@ -11,7 +11,7 @@ module.exports = async () => {
     return core.setFailed(err.message)
   }
 
-  const octokit = github.getOctokit(core.getInput('github-token'))
+  const octokit = await github.getOctokit(core.getInput('github-token'))
 
   const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/')
   const sha = process.env.GITHUB_SHA
