@@ -18,7 +18,7 @@ describe('github', () => {
 
   describe('getOctokit', () => {
     it('wraps @actions/github\'s getOctokit', async () => {
-      expect(await github.getOctokit()).toBe(mockOctokit)
+      expect(await github.getOctokit('token')).toBe(mockOctokit)
     })
   })
 
