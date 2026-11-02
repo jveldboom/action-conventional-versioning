@@ -52,16 +52,16 @@ describe('run', () => {
   })
 
   it('should fail when latest tag is no valid semver', async () => {
-    github.getLatestRelease.mockResolvedValueOnce({ name: 'invalid-semver' })
+    github.getLatestRelease.mockResolvedValueOnce({ tag_name: 'invalid-semver' })
 
     await run()
     expect(core.setFailed).toHaveBeenCalledTimes(1)
-    expect(core.setFailed).toHaveBeenNthCalledWith(1, 'latest tag name "invalid-semver" is not valid semver. GitHub API response: {"name":"invalid-semver"}')
+    expect(core.setFailed).toHaveBeenNthCalledWith(1, 'latest tag name "invalid-semver" is not valid semver. GitHub API response: {"tag_name":"invalid-semver"}')
   })
 
   it('should output versions', async () => {
     const latestTag = {
-      name: 'v1.2.3',
+      tag_name: 'v1.2.3',
       commit: { sha: '123456789' }
     }
     github.getLatestRelease.mockResolvedValueOnce(latestTag)
@@ -85,7 +85,7 @@ describe('run', () => {
 
     it('should downgrade a breaking change to minor when over the cap', async () => {
       process.env['INPUT_MAX-MAJOR-VERSION'] = '1'
-      github.getLatestRelease.mockResolvedValueOnce({ name: 'v1.4.2', commit: { sha: '123' } })
+      github.getLatestRelease.mockResolvedValueOnce({ tag_name: 'v1.4.2', commit: { sha: '123' } })
       github.compareCommits.mockResolvedValueOnce(breaking)
 
       await run()
@@ -99,7 +99,7 @@ describe('run', () => {
 
     it('should allow a major bump when the cap is high enough', async () => {
       process.env['INPUT_MAX-MAJOR-VERSION'] = '2'
-      github.getLatestRelease.mockResolvedValueOnce({ name: 'v1.4.2', commit: { sha: '123' } })
+      github.getLatestRelease.mockResolvedValueOnce({ tag_name: 'v1.4.2', commit: { sha: '123' } })
       github.compareCommits.mockResolvedValueOnce(breaking)
 
       await run()
@@ -112,7 +112,7 @@ describe('run', () => {
     it('should cap default-bump major when analyzing commits', async () => {
       process.env['INPUT_MAX-MAJOR-VERSION'] = '1'
       process.env['INPUT_DEFAULT-BUMP'] = 'major'
-      github.getLatestRelease.mockResolvedValueOnce({ name: 'v1.4.2', commit: { sha: '123' } })
+      github.getLatestRelease.mockResolvedValueOnce({ tag_name: 'v1.4.2', commit: { sha: '123' } })
       github.compareCommits.mockResolvedValueOnce([])
 
       await run()
@@ -127,7 +127,7 @@ describe('run', () => {
       const utils = require('./utils')
       jest.spyOn(utils, 'getVersionBump').mockResolvedValueOnce('major')
       jest.spyOn(utils, 'getMajorCommits').mockResolvedValueOnce([])
-      github.getLatestRelease.mockResolvedValueOnce({ name: '1.2.0', commit: { sha: '123' } })
+      github.getLatestRelease.mockResolvedValueOnce({ tag_name: '1.2.0', commit: { sha: '123' } })
       github.compareCommits.mockResolvedValueOnce(breaking)
 
       try {
@@ -155,7 +155,7 @@ describe('run', () => {
 
     it('should downgrade and stay on the major line when latest release is above the cap', async () => {
       process.env['INPUT_MAX-MAJOR-VERSION'] = '1'
-      github.getLatestRelease.mockResolvedValueOnce({ name: 'v3.1.0', commit: { sha: '123' } })
+      github.getLatestRelease.mockResolvedValueOnce({ tag_name: 'v3.1.0', commit: { sha: '123' } })
       github.compareCommits.mockResolvedValueOnce(breaking)
 
       await run()
@@ -178,7 +178,7 @@ describe('run', () => {
     })
 
     it('should leave behavior unchanged when the cap is unset', async () => {
-      github.getLatestRelease.mockResolvedValueOnce({ name: 'v1.4.2', commit: { sha: '123' } })
+      github.getLatestRelease.mockResolvedValueOnce({ tag_name: 'v1.4.2', commit: { sha: '123' } })
       github.compareCommits.mockResolvedValueOnce(breaking)
 
       await run()

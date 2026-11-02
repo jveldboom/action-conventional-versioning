@@ -36,10 +36,6 @@ inputs:
       When a bump would produce a higher major version, it is downgraded to minor and a warning is logged.
       Empty means no limit.
     default: ''
-  mode:
-    description: Sets the version mode to run - future use-case
-    default: default
-
 outputs:
   version:
     description: Semantic version without prefix

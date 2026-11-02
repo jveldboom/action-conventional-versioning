@@ -92600,8 +92600,8 @@ module.exports = async () => {
     return utils.setVersionOutputs({ version, bump, previousVersion })
   }
 
-  if (!semver.valid(latestRelease.name)) {
-    return core.setFailed(`latest tag name "${latestRelease.name}" is not valid semver. GitHub API response: ${JSON.stringify(latestRelease)}`)
+  if (!semver.valid(latestRelease.tag_name)) {
+    return core.setFailed(`latest tag name "${latestRelease.tag_name}" is not valid semver. GitHub API response: ${JSON.stringify(latestRelease)}`)
   }
 
   // get commits from last tag and calculate version bump
@@ -92613,7 +92613,7 @@ module.exports = async () => {
   }
   const requestedBump = await utils.getVersionBump(commits, core.getInput('default-bump'), filterOpts)
 
-  const previousVersion = latestRelease.name
+  const previousVersion = latestRelease.tag_name
   const offenders = requestedBump === 'major' && maxMajor !== null
     ? await utils.getMajorCommits(commits, filterOpts)
     : []

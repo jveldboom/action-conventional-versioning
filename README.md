@@ -4,7 +4,7 @@ GitHub Action to automatically generate version numbers based on [conventional c
 ## Design Decisions
 - Easily generate automatic version numbers based on [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) spec.
 - Should work with any language or repository structure
-- Should be used as a building block and not try to manage the whole versioning process. (although may handle optional tagging in the future with the `mode` input)
+- Should be used as a building block and not try to manage the whole versioning process.
 
 ## Usage
 ```yaml
@@ -46,10 +46,6 @@ GitHub Action to automatically generate version numbers based on [conventional c
     # A bump that would exceed it is downgraded to minor and a warning is logged.
     # Default: '' (no limit)
     max-major-version: ''
-
-    # Set the versioning mode to run (future use-case)
-    # Default: default
-    mode: ''
 ```
 
 ### Filtering by commit scope
